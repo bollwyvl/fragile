@@ -1,2 +1,9 @@
+# github deps
+static/lib/github/lib/base64.js
+static/lib/github/lib/underscore-min.js
+
+# github
+static/lib/github/github.js
+
 # fragile
 static/js/fragile.js
