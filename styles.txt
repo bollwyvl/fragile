@@ -1,0 +1,2 @@
+# fragile
+static/css/fragile.css

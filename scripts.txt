@@ -1,0 +1,2 @@
+# fragile
+static/js/fragile.js

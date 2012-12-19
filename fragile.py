@@ -27,9 +27,9 @@ def make_app(env="dev"):
     
     cfg = {
         "dev": dict(
-            static_url_path="",
+            static_url_path="/static",
             template_folder="./templates",
-            static_folder=opa(opj(app_home, ".."))
+            static_folder=opa(opj(app_home, "static"))
             ),
         "prod": dict(
             static_url_path="/dist",
@@ -47,18 +47,38 @@ def make_app(env="dev"):
     app.config['CSRF_ENABLED'] = DEBUG
     app.config['SECRET_KEY'] = "totally-insecure"
     app.config['DEBUG'] = DEBUG
+    app.config['BOOTSTRAP_FONTAWESOME'] = True
 
     Bootstrap(app)
 
     @app.route(url_root)
     def home():
-        
         kwargs = {}
+        
+        if env != "test":
+            kwargs.update(assets())
         
         return render_template("index.html", env=env, **kwargs)
         
     return app
+
+def assets(for_file="."):
+    result = dict(scripts=[], styles=[])
+    for a_type in result.keys():
+        a_list = opj(
+            os.path.dirname(__file__),
+            for_file,
+            a_type + ".txt")
+        if os.path.exists(a_list):
+            result[a_type] = [
+                asset.strip()
+                for asset
+                in open(a_list).read().split("\n")
+                if asset.strip() and not asset.strip().startswith("#")
+            ]
     
+    return result
+
 if __name__ == "__main__":
     app = make_app()
     app.run()
