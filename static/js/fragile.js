@@ -1,12 +1,10 @@
-;(function(gh, $, _, url_args){
+;(function(gh, $, _, d3){
   var window = this;
 
   var fragile = window.fragile = function(){
     var my = {
         // configuration
         cfg: {},
-        // stuff in url
-        page_args: {},
         gh: null,
         user: null,
         issues: [],
@@ -15,16 +13,14 @@
       api = {};
 
     api.init = function(){
-      api.patch()
-        .load_config()
-        //.auth() reenable this when a backend token broker is available
+      api.load_config()
+        .init_ui()
         .install_actions();
     };
+    
+    api.init_ui = function(){
+      $(".title.from_config").text(my.cfg.title);
 
-    api.auth = function(){
-      if(!my.page_args.code) return api;
-
-      api.swap_code_for_token();
       return api;
     };
 
@@ -35,62 +31,17 @@
         dataType: "json",
         async: false
       }).responseText) || {});
-
-      my.page_args = url_args(window);
-      return api;
-    };
-
-    api.patch = function(){
-      // patch underscore with a mustache... hope nobody else needs this
-      _.templateSettings = {
-        interpolate : /\{\{(.+?)\}\}/g
-      };
-      return api;
-    };
-
-    api.swap_code_for_token = function(){
-      var response = $.ajax({
-        url: "https://github.com/login/oauth/access_token",
-        type: "POST",
-        crossDomain: true,
-        dataType: "jsonp",
-        data: {
-          client_id: my.cfg.client_id,
-          client_secret: "bb965ad1c4f0c6642429a41766b735c5a3146883",
-          code: my.page_args.code,
-          state: window.localStorage.state
-        },
-        success: function(){
-          console.log(arguments);
-        }
-      });
+      
       return api;
     };
 
     api.install_actions = function(){
-      /*
-        reenable this when a backend authenticator is available
-        $(".loggedin.nope.action").on("click", api.login);
-      */
       $("#login .btn-primary").on("click", api.login_basic);
       $(".loggedin.yep.action").on("click", api.logout);
+      $("#issues .refresh").on("click", api.issues);
+      $("#pr .refresh").on("click", api.pull_requests);
       return api;
     };
-
-    /*
-    api.login_oauth = function(){
-      window.localStorage.state = Math.random();
-
-      var params = $.param({
-        client_id: my.cfg.client_id,
-        redirect_uri: window.location.href,
-        state: window.localStorage.state
-      });
-      window.location = "https://github.com/login/oauth/authorize?" + params;
-      // probably won't get here... maybe with a lovely pop-up
-      return api;
-    };
-    */
 
     api.login_basic = function(){
       var username = $("#username").val(),
@@ -143,7 +94,44 @@
     };
     
     api.update_issues_ui = function(){
-      debugger;
+        
+      // this need to be configurable
+      
+      var cols = [
+        "title"
+      ].map(function(x){return fragile.handlers.issues[x];});
+      
+      var head = d3.select("#issues thead tr")
+        .selectAll("th").data(cols);
+        
+      head.enter().append("th");
+      
+      head.text(function(datum){
+        return datum.label;
+      });
+      
+      var row = d3.select("#issues tbody")
+        .selectAll("tr").data(my.issues);
+        
+      row.enter().append("tr");
+      row.exit().remove();
+        
+      var col = row.selectAll("td")
+        .data(function(datum){
+          return cols.map(function(col){
+            return {col: col, val: datum[col.name], ctx: datum};
+          });
+        });
+          
+      col.enter().append("td")
+        .attr("class", function(datum){return datum.col.name;});
+          
+      col.each(function(datum){
+        if(!datum.col.handler) return d3.select(this).text(datum.val);
+        
+        datum.col.handler.call(this, datum.val, datum.ctx);
+      });
+
       return api;
     };
     
@@ -176,12 +164,15 @@
             repo_done();
           });
       });
+      
       return api;
     };
 
     return api;
   };
 
+fragile.handlers = {};
+
 fragile().init();
 
-}).call(this, Github, $, _, url_args);
+}).call(this, Github, $, _, d3);

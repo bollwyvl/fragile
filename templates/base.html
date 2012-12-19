@@ -22,7 +22,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <a class="brand" href="#">Issues for Fragile</a>
+      <a class="brand title from_config" href="#"></a>
       <div class="nav-collapse collapse">
         <ul class="nav pull-right">
           <li class="dropdown">
@@ -97,13 +97,39 @@
       </div><!--/.well -->
     </div><!--/span-->
     <div class="span9">
+      <div id="issues" class="table table-condensed">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <a class="brand" href="#issues">Issues</a>
+            <ul class="nav pull-right">
+              <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
+              <li><a href="#" class="columns"><i class="icon-table"></i>Columns</a></li>
+            </ul>
+          </div>
+        </div>
+        <table>
+          <thead><tr></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="pr">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <a class="brand" href="#issues">Pull Requests</a>
+            <ul class="nav pull-right">
+              <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
+              <li><a href="#" class="columns"><i class="icon-table"></i>Columns</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div><!--/span-->
   </div><!--/row-->
 
   <hr>
 
   <footer>
-    <p>&copy; Company 2012</p>
+    <p>&copy; <span class="from_config title"></span> 2012</p>
   </footer>
 {%- endblock %}
 
