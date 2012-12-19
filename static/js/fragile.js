@@ -7,7 +7,10 @@
         cfg: {},
         // stuff in url
         page_args: {},
-        gh: null
+        gh: null,
+        user: null,
+        issues: [],
+        pull_requests: []
       },
       api = {};
 
@@ -102,27 +105,78 @@
         auth: "basic"
       });
 
-      api.user(username);
+      api.user(username, api.issues);
 
       return api;
     };
 
     api.logout = function(){
       my.gh = null;
-      $("#username").val();
-      $(".loggedin.yep").hide();
-      $(".loggedin.nope").show();
+      my.user = null;
+      api.update_user_ui();
+      
+      return api;
     };
 
-    api.user = function(username){
+    api.user = function(username, cb){
       my.gh.getUser().show(username, function(err, user) {
         my.user = user;
+        api.update_user_ui();
+        cb();
+      });
+      
+      return api;
+    };
+    
+    api.update_user_ui = function(){
+      if(my.user){
         $(".username.me").text(my.user.login);
         $(".avatar.me").attr("src", my.user.avatar_url);
         $(".loggedin.yep").show();
         $(".loggedin.nope").hide();
+      }else{
+        $(".loggedin.yep").hide();
+        $(".loggedin.nope").show();
+      }
+      
+      return api;
+    };
+    
+    api.update_issues_ui = function(){
+      debugger;
+      return api;
+    };
+    
+    api.issues = function(){
+      var repos_left = my.cfg.repos.length;
+      
+      // called by the asynchronous readers
+      function repo_done(){
+        repos_left--;
+        if(repos_left) return;
+        api.update_issues_ui();
+      }
+      
+      my.cfg.repos.map(function(owner_repo){
+        owner_repo = owner_repo.split("/");
+        my.gh.getIssues(owner_repo[0], owner_repo[1])
+          .list(function(err, issues){
+            var urls = _.pluck(my.issues, "url");
+            
+            issues.map(function(issue){
+              var issue_idx = urls.indexOf(issue.url);
+              
+              if(issue_idx === -1){
+                my.issues.push(issue);
+              }else{
+                my.issues[issue_idx] = issue;
+              }
+            });
+            
+            repo_done();
+          });
       });
-
+      return api;
     };
 
     return api;
