@@ -1,0 +1,3 @@
+[submodule "lib/github"]
+	path = lib/github
+	url = https://github.com/bollwyvl/github.git
