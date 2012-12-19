@@ -1,6 +1,3 @@
-[submodule "lib/github"]
-	path = static/lib/github
-	url = https://github.com/bollwyvl/github.git
 [submodule "static/lib/github"]
 	path = static/lib/github
 	url = https://github.com/bollwyvl/github.git
