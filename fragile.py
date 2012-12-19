@@ -48,6 +48,7 @@ def make_app(env="dev"):
     app.config['SECRET_KEY'] = "totally-insecure"
     app.config['DEBUG'] = DEBUG
     app.config['BOOTSTRAP_FONTAWESOME'] = True
+    app.config['BOOTSTRAP_JQUERY_VERSION'] = None
 
     Bootstrap(app)
 

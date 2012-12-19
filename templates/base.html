@@ -1,0 +1,120 @@
+{% extends "bootstrap_responsive.html" %}
+
+{% block title %}Fragile{% endblock %}
+
+{%- block style %}
+    {% if env == "dev" %}
+        {{ super() }}
+        {% for style in styles %}
+        <link rel="stylesheet" href="./{{ style }}">
+        {% endfor %}
+    {% else %}
+        <link rel="stylesheet" href="./css/fragile-min.css">
+    {% endif %}
+{%- endblock %}
+
+{%- block body_content %}
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container-fluid">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand" href="#">Issues for Fragile</a>
+      <div class="nav-collapse collapse">
+        <ul class="nav pull-right">
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="loggedin nope">
+                  Not Logged in to <i class="icon-github-sign"></i>GitHub
+                </span>
+                <span class="loggedin yep">
+                  <img class="avatar me" height="16" width="16"/>
+                  <b class="me username">username</b>
+                </span>
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li class="loggedin nope action">
+                  <a href="#" data-toggle="modal" data-target="#login">
+                    Sign In
+                  </a>
+                </li>
+                <li class="loggedin yep action">
+                  <a href="#">Log Out</a>
+                </li>
+              </ul>
+            </li>
+        </ul>
+        <ul class="nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+</div>
+
+<div id="login" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Sign In to GitHub</h3>
+  </div>
+  <div class="modal-body">
+    <p>Because this is just some JavaScript (and can't, therefore, store a 
+       Client Secret), you'll have to log in with your GitHub username and 
+       password. I am working on a backend OAuth authenticator that could be 
+       deployed easily to Heroku or App Engine or something.
+       
+       <form class="form-inline">
+         <input id="username" type="text" class="input-small" placeholder="Username">
+         <input id="password" type="password" class="input-small" placeholder="Password">
+       </form>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">
+      No, Thanks
+    </a>
+    <a href="#" class="btn btn-primary" data-dismiss="modal">
+      <i class="icon-github"></i> Sign In
+    </a>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span3">
+      <div class="well sidebar-nav">
+        <ul class="nav nav-list">
+          <li class="nav-header">Sidebar</li>
+          <li class="active"><a href="#">Link</a></li>
+          <li><a href="#">Link</a></li>
+        </ul>
+      </div><!--/.well -->
+    </div><!--/span-->
+    <div class="span9">
+    </div><!--/span-->
+  </div><!--/row-->
+
+  <hr>
+
+  <footer>
+    <p>&copy; Company 2012</p>
+  </footer>
+{%- endblock %}
+
+
+{%- block bootstrap_js_bottom %}
+    {% if env == "dev" %}
+        {% for script in scripts %}
+        <script type="text/javascript" src="./{{ script }}"></script>
+        {% endfor %}
+    {% else %}
+        <script type="text/javascript" src="./js/fragile-min.js"></script>
+    {% endif %}
+
+{%- endblock %}

@@ -1,3 +1,6 @@
+static/lib/jquery-1.8.3.min.js
+static/bootstrap/js/bootstrap.min.js
+
 # github deps
 static/lib/github/lib/base64.js
 static/lib/github/lib/underscore-min.js
@@ -6,4 +9,5 @@ static/lib/github/lib/underscore-min.js
 static/lib/github/github.js
 
 # fragile
+static/js/url_args.js
 static/js/fragile.js
