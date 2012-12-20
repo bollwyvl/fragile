@@ -102,7 +102,7 @@
     
     api.default_columns = function(parent){
       var col_names;
-      if(parent == "issues"){
+      if(parent === "issues"){
         col_names = ["issue_number", "title"];
       }
       return col_names.map(function(col_name){
@@ -215,7 +215,7 @@
         col.enter().append("td");
         
         col.each(function(datum, idx){
-          if(datum.key == "enabled"){
+          if(datum.key === "enabled"){
             var check = d3.select(this).selectAll("input")
               .data([1]);
               

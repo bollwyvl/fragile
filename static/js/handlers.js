@@ -1,4 +1,4 @@
-;(function(fragile, d3){
+;(function(fragile, d3, moment){
   fragile.handlers.issues = {
     title: {
       gh_field: "title",
@@ -73,6 +73,29 @@
           .attr("target", "_blank")
           .text(value);
       }
+    },
+    
+
+    
+    created_at: {
+      gh_field: "created_at",
+      label: "Created",
+      description: "When the issue was created",
+      handler: function(value, context){
+        var a = d3.select(this)
+          .text(moment(value).fromNow());
+      }
+    },
+    
+    updated_at: {
+      gh_field: "updated_at",
+      label: "Updated",
+      description: "When the issue was last updated",
+      handler: function(value, context){
+        var a = d3.select(this)
+          .text(moment(value).fromNow());
+      }
     }
+    
   };
-}).call(this, fragile, d3);
+}).call(this, fragile, d3, moment);

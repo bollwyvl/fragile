@@ -12,6 +12,9 @@ static/lib/github/github.js
 # d3
 static/lib/d3/d3.v2.min.js
 
+# moment
+static/lib/moment/min/moment.min.js
+
 # fragile
 static/js/fragile.js
 static/js/handlers.js
