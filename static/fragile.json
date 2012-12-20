@@ -1,4 +1,7 @@
 {
   "title": "Fragile",
-  "repos": ["bollwyvl/fragile"]
+  "repos": ["bollwyvl/fragile"],
+  "users": [
+    "bollwyvl",
+  ]
 }

@@ -9,7 +9,7 @@
         user: null,
         issues: [],
         pull_requests: [],
-        columns: {issues: [], pr: []}
+        columns: {issues: [], pulls: []}
       },
       api = {};
 
@@ -42,76 +42,13 @@
       $("#issues .refresh").on("click", api.issues);
       $("#issues .columns").on("click", api.update_columns("issues"));
 
-      $("#pr .refresh").on("click", api.pull_requests);
-      $("#pr .columns").on("click", api.update_columns("pr"));
+      $("#pulls .refresh").on("click", api.pull_requests);
+      $("#pulls .columns").on("click", api.update_columns("pulls"));
       
       $("#columns .btn-primary").on("click", api.update_issues_ui);
       return api;
     };
     
-    api.update_columns = function(parent){
-      return function(){
-        d3.select("#columns h3 span")
-          .text(d3.select("#" + parent + " .brand").text());
-        
-        var hndlr_status = _.map(
-          fragile.handlers[parent],
-          function(col, name){
-            return {
-              enabled: my.columns[parent].indexOf(col) !== -1,
-              label: col.label,
-              desc: col.description,
-              context: col
-            };
-        });
-        
-        var row = d3.select("#columns tbody")
-          .selectAll("tr").data(hndlr_status);
-          
-        row.enter().append("tr");
-        row.exit().remove();
-        
-        var col = row.selectAll("td")
-          .data(function(col){
-            return d3.entries(col)
-              .filter(function(x){return x.key !== "context";})
-              .map(function(datum){
-                datum.context = col;
-                return datum;
-              });
-          });
-        
-        col.enter().append("td");
-        
-        col.each(function(datum, idx){
-          if(datum.key == "enabled"){
-            var check = d3.select(this).selectAll("input")
-              .data([1]);
-              
-            check.enter().append("input")
-              .attr("type", "checkbox");
-            
-            check.property("checked", function(chk){
-              return datum.value;
-            });
-            
-            check.on("click", function(chk){
-              var col = datum.context.context,
-                idx = my.columns.issues.indexOf(col);
-              if(idx === -1){
-                my.columns.issues.push(col);
-              }else{
-                my.columns.issues.splice(idx, 1);
-              }
-            });
-          }else{
-            d3.select(this).text(datum.value);
-          }
-        });
-        
-        return api;
-      };
-    };
 
     api.login_basic = function(){
       var username = $("#username").val(),
@@ -163,26 +100,45 @@
       return api;
     };
     
+    api.default_columns = function(parent){
+      var col_names;
+      if(parent == "issues"){
+        col_names = ["issue_number", "title"];
+      }
+      return col_names.map(function(col_name){
+        return api.make_column_config(col_name, parent);
+      });
+    };
+    
+    api.make_column_config = function(col_name, parent){
+      return {
+        col_name: col_name,
+        col: fragile.handlers[parent][col_name]
+      };
+    };
+    
+    api.titlefy = function(slug){
+      return slug.split("_")
+        .map(function(bit){
+          return bit[0].toUpperCase() + bit.slice(1);
+        }).join(" ");
+    };
+    
     api.update_issues_ui = function(){
         
-      if(!my.columns.issues.length){
-        // have a default prop?
-        my.columns.issues = [
-          fragile.handlers.issues.number,
-          fragile.handlers.issues.title
-        ];
-      }
+      var col_cfgs = my.columns.issues,
+        default_cols = api.default_columns("issues");
+      
+      col_cfgs = col_cfgs.length ? col_cfgs : default_cols;
       
       var head = d3.select("#issues thead tr")
-        .selectAll("th").data(my.columns.issues, function(x){
-          return x.name;
-        });
+        .selectAll("th").data(col_cfgs);
         
       head.enter().append("th");
       head.exit().remove();
       
       head.text(function(datum){
-        return datum.label;
+        return datum.col.label || api.titlefy(datum.col_name);
       });
       
       var row = d3.select("#issues tbody")
@@ -193,26 +149,101 @@
         
       var col = row.selectAll("td")
         .data(function(datum){
-          return my.columns.issues.map(function(col){
-            return {col: col, val: datum[col.name], ctx: datum};
+          return col_cfgs.map(function(col_cfg, idx){
+            return {
+              cfg: col_cfg,
+              val: datum[col_cfg.col.gh_field], // really needed? sensible def
+              ctx: datum
+            };
           });
-        }, function(col){
-          return col.col.name;
+        }, function(row_col, idx){
+          return row_col.cfg.col_name + "_" +idx;
         });
       
       col.exit().remove();
       
       col.enter().append("td")
-        .attr("class", function(datum){return datum.col.name;});
+        .attr("class", function(datum){return datum.cfg.col_name;});
           
-      col.each(function(datum){
-        if(!datum.col.handler) return d3.select(this).text(datum.val);
+      col.each(function(cell){
+        if(!cell.cfg.col.handler) return d3.select(this).text(cell.val);
         
-        datum.col.handler.call(this, datum.val, datum.ctx);
+        cell.cfg.col.handler.call(this, cell.val, cell.ctx, my.cfg);
       });
 
       return api;
     };
+    
+    
+    api.update_columns = function(parent){
+      return function(){
+        d3.select("#columns h3 span")
+          .text(d3.select("#" + parent + " .brand").text());
+        
+        var enabled_idx = function(col_name){
+          // returns -1 if not found
+          return _.pluck(my.columns[parent], "col_name").indexOf(col_name);
+        };
+        
+        var hndlr_status = _.map(
+          fragile.handlers[parent],
+          function(col, name){
+            return {
+              enabled: enabled_idx(name) !== -1,
+              label: col.label || api.titlefy(name),
+              desc: col.description,
+              cfg: api.make_column_config(name, parent)
+            };
+        });
+        
+        var row = d3.select("#columns tbody")
+          .selectAll("tr").data(hndlr_status);
+          
+        row.enter().append("tr");
+        row.exit().remove();
+        
+        var col = row.selectAll("td")
+          .data(function(cfg){
+            return d3.entries(cfg)
+              .filter(function(x){return x.key !== "cfg";})
+              .map(function(datum){
+                datum.cfg = cfg;
+                return datum;
+              });
+          });
+        
+        col.enter().append("td");
+        
+        col.each(function(datum, idx){
+          if(datum.key == "enabled"){
+            var check = d3.select(this).selectAll("input")
+              .data([1]);
+              
+            check.enter().append("input")
+              .attr("type", "checkbox");
+            
+            check.property("checked", function(chk){
+              return datum.value;
+            });
+            
+            check.on("click", function(chk){
+              var cfg = datum.cfg.cfg,
+                idx = enabled_idx(cfg.col_name);
+              if(idx === -1){
+                my.columns.issues.push(cfg);
+              }else{
+                my.columns.issues.splice(idx, 1);
+              }
+            });
+          }else{
+            d3.select(this).text(datum.value);
+          }
+        });
+        
+        return api;
+      };
+    };
+    
     
     api.issues = function(){
       var repos_left = my.cfg.repos.length;
