@@ -4,3 +4,6 @@
 [submodule "static/lib/d3"]
 	path = static/lib/d3
 	url = https://github.com/mbostock/d3.git
+[submodule "static/lib/moment"]
+	path = static/lib/moment
+	url = https://github.com/timrwood/moment.git
