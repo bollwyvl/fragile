@@ -67,22 +67,6 @@ def clean():
         sh.rm("-r", sh.glob("dist/*"), sh.glob("build/*"))
     except:
         print ".. already clean"
-@task
-def deploy():
-    build()
-    proj()
-
-    root_sha = sh.git("rev-parse", "HEAD")
-
-    sh.cd("dist")
-
-    sh.git.commit("-am", "'Automatic build from %s'" % root_sha)
-
-    sh.git.push("origin", "gh-pages")
-
-    proj()
-    sh.git.add("dist")
-    sh.git.status()
 
 @task
 def favicon():
@@ -113,21 +97,15 @@ def favicon():
 @task
 def copy_assets():
     proj()
+    
+    fbs = os.path.join(os.path.dirname(flask_bootstrap.__file__), "static")
+    
     print(". copying assets ...")
     copy_patterns = {
-        "dist/lib/blockly": ["lib/blockly/blockly.css"],
-        "dist/lib/blockly/media":  sh.glob("lib/blockly/media/*") or [],
-        "dist/font": sh.glob("lib/awesome/font/fontawesome-webfont.*") or [],
-        "dist/lib/swatch": sh.glob("lib/swatch/*.css"),
-        "dist/lib/cm/theme": sh.glob("lib/cm/theme/*.css"),
-        "dist/css": [],
-        "dist/js": [],
-        "dist/blockml": sh.glob("blockml/*.xml") or [],
-        "dist/svg": sh.glob("svg/*.svg") or [],
+        "dist/font": sh.glob("%s/font/fontawesome-webfont.*" % fbs),
     }
 
     for dst, copy_files in copy_patterns.items():
-
         os.path.exists(dst) or sh.mkdir("-p", dst)
         for c_file in copy_files:
             print "... copying", c_file, dst
@@ -190,34 +168,6 @@ def minify():
         pprint(sh.python("setup.py", "minify_" + src, verbose=True))
         for src in sources
     ]
-
-def asset_links(asset_type):
-    template = """
-                <li><a href="#%(thing)s" data-fragile-%(thing)s="%(file)s">
-                    %(text)s
-                </a></li>"""
-    cfg = dict(
-        THEMES=dict(
-            path="lib/swatch/*.css",
-            thing="theme",
-            sub_data=lambda x: x.split(".")[1],
-            sub_text=lambda x: x
-        ),
-        EXAMPLES=dict(
-            path="blockml/*.xml",
-            thing="example",
-            sub_data=lambda x: os.path.basename(x)[0:-4],
-            sub_text=lambda x: " ".join(x.split("_")).title()
-        )
-    )[asset_type]
-    return "\n".join([
-        template % {
-            "file": cfg["sub_data"](path),
-            "thing": cfg["thing"],
-            "text": cfg["sub_text"](cfg["sub_data"](path))
-        }
-        for path in sh.glob(cfg["path"])
-    ])
     
 @task
 def serve_dev():
