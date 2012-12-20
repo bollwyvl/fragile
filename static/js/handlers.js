@@ -31,6 +31,7 @@
       var color = d3.scale.category20()
         .domain(config.users);
         
+      // call the async method, update whenevs
       value(function(err, comments){
         var hist = d3.layout.histogram()
           .bins(scale.ticks(10))
@@ -63,7 +64,41 @@
       });
     }
   };
-    
+  
+  issues.devs_involved = {
+    gh_field: "_comments",
+    description: "A listing of commiters who have commented",
+    handler: function(value, context, config){
+      var td = d3.select(this);
+      
+      value(function(err, comments){
+        var users = comments.reduce(function(result, cmnt){
+          if(config.users.indexOf(cmnt.user.login) !== -1){ 
+            result[cmnt.user.login] = cmnt.user.avatar_url;
+          }
+          return result;
+        }, {});
+        
+        var avatars = td.selectAll("img")
+          .data(d3.entries(users));
+          
+        avatars.enter().append("img");
+        
+        avatars
+          .attr("src", function(usr){
+            return usr.value;
+          })
+          .attr("title", function(usr){
+            return usr.key;
+          })
+          .attr("height", 16)
+          .attr("width", 16);
+          
+        avatars.exit().remove();
+      });
+    }
+  };
+  
   issues.issue_number = {
     gh_field: "number",
     label: "#",
