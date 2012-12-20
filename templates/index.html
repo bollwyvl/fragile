@@ -1,21 +1,50 @@
 {% extends "base.html" %}
 
 {% block main_content %}
-{% for id, label in [("issues", "Issues"), ("pulls", "Pull Requests")] %}
-<div id="{{ id }}" class="span6">
-  <div class="navbar">
-    <div class="navbar-inner">
-      <a class="brand" href="#issues">{{ label }}</a>
-      <ul class="nav pull-right">
-        <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
-        <li><a href="#" class="columns" data-toggle="modal" data-target="#columns"><i class="icon-table"></i>Columns</a></li>
-      </ul>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div id="repos" class="span12">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <a class="brand" href="#repos" name="repos">Repos</a>
+            <ul class="nav pull-right">
+              <li><a href="#" class="refresh">
+                <i class="icon-refresh"></i>Refresh</a>
+              </li>
+            </ul>
+          </div>
+        </div>
     </div>
   </div>
-  <table class="table table-condensed">
-    <thead><tr></tr></thead>
-    <tbody></tbody>
-  </table>
-</div>
-{% endfor %}
+
+  <div class="row-fluid">
+    {% for id, label in [("issues", "Issues"), ("pulls", "Pull Requests")] %}
+    <div id="{{ id }}" class="span6">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="brand" href="#{{id}}" name="{{id}}">
+            {{ label }}
+          </a>
+          <ul class="nav pull-right">
+            <li>
+              <a href="#" class="refresh">
+                <i class="icon-refresh"></i>Refresh
+              </a>
+            </li>
+            <li>
+              <a href="#" class="columns" data-toggle="modal" data-target="#columns">
+                <i class="icon-table"></i>Columns
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <table class="table table-condensed">
+        <thead><tr></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    {% endfor %}
+  </div><!-- row -->
+</div><!-- container -->
 {% endblock %}
