@@ -1,3 +1,13 @@
 .loggedin.yep{
   display: none;
 }
+
+/* treemap */
+#repos rect{
+  fill: #fff;
+  stroke: #ccc;
+}
+
+#repos rect:hover{
+  fill: #999;
+}

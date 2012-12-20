@@ -20,6 +20,8 @@
         issues: [],
         // list of pull requests from api
         pull_requests: [],
+        // list of repo trees
+        repos: {},
         // column view configurations
         columns: {issues: [], pulls: []}
       },
@@ -37,6 +39,7 @@
     api.init_ui = function(){
       // do more stuff based on config, i suppose
       $(".title.from_config").text(my.cfg.title);
+      $("title").text(my.cfg.title);
 
       return api;
     };
@@ -86,9 +89,15 @@
       });
 
       // right now, just does issues... but should do more
-      api.user(username, api.update_issues_data);
+      api.user(username, api.gh_api_available);
 
       return api;
+    };
+    
+    api.gh_api_available = function(){
+      // hooray, we have data. let's get busy
+      api.update_issues_data();
+      api.update_repos_data();
     };
 
     api.logout = function(){
@@ -212,6 +221,123 @@
       return api;
     };
     
+
+    /*
+    {
+      "type": "tree",
+      "path": "IPython",
+      "sha": "bb21dfced8a84fff719ce1caeb427148e5180bd5",
+      "mode": "040000",
+      "url": ...
+    },
+    {
+      "type": "blob",
+      "path": "IPython/__init__.py",
+      "sha": "fa3eb25688a23110f7d9a539a66d104b3c68689a",
+      "mode": "100644",
+      "url": ...,
+      "size": 3214
+    },
+    */
+    
+    api.file_list_to_treemap = function(file_list){
+      // whips up a d3 "canonical" data structure... failed with other approach
+      // also, we're going to use a map with side-effects (shudder)
+      // this has the pleasant benefit of leaving the in-place tree list for 
+      // others to use... though keeping this someplace may be beneficial...
+      
+      function tree_struct(orig){
+        return {orig: orig, children: {}};
+      }
+      
+      //up, gonna use a special value
+      var root = tree_struct({type: "tree", path: "."});
+      
+      file_list.map(function(path_or_file){
+        var parent = root,
+          bits = path_or_file.path.split("/"),
+          last_bit = bits.slice(-1);
+        
+        // hooray, more side effects!  
+        bits.slice(0, -1).map(function(bit){
+          parent = parent.children[bit];
+        });
+        
+        parent.children[last_bit] = tree_struct(path_or_file);
+      });
+      // d3 likes lists
+      return [root];
+    };
+    
+    api.update_repos_ui = function(){
+      var width = ($(".trees").width() / d3.keys(my.repos).length) - 15,
+          height = 300;
+      
+      var children = function(path_or_file){
+        if(path_or_file.type == "blob") return [];
+        
+        return d3.values(path_or_file.children);
+      };
+      
+      var sort = function(a, b){
+        // would like paths first, then files... might be reversed
+        if(a.orig.type !== b.orig.type){
+          return a.orig.type.localeCompare(b.orig.type);
+        }   
+        return a.orig.path.localeCompare(b.orig.path);
+      };
+        
+      var value = function(file_or_path){
+        return file_or_path.orig.size;
+      };
+        
+
+      _.map(my.repos, function(file_list, repo_name){
+        
+        // magic root... underlying data item is changed
+        var root = [{path: "", type: "tree"}];
+        
+        var treemap = d3.layout.treemap()
+          .size([width-1, height-1])
+          .children(children)
+          .sort(sort)
+          .value(value);
+          
+        var svg = d3.select(".trees").append("svg")
+          .attr("width", width)
+          .attr("height", height)
+        .append("g")
+          .attr("transform", "translate(.5,.5)"); // weird pixel thing 
+          
+        var cell = svg.data(api.file_list_to_treemap(file_list))
+          .selectAll("g").data(treemap.nodes)
+          .enter().append("g")
+            .attr("class", "cell")
+            .attr("transform", function(d){
+              return "translate(" + d.x + "," + d.y + ")";
+            });
+
+        cell.append("rect")
+          .attr("width", function(d){ return d.dx; })
+          .attr("height", function(d){ return d.dy; })
+          .on("mouseover", function(file){
+            d3.select("#repos .file_path").text(file.orig.path);
+          })
+          .on("click", function(file){
+            
+          });
+
+        cell.append("text")
+          .attr("x", function(d) { return d.dx / 2; })
+          .attr("y", function(d) { return d.dy / 2; })
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          
+          .text(function(d) { return d.children ? null : d.name; });
+          
+      });
+    };
+    
     
     api.update_columns = function(parent){
       // column update ui for issues and pull requests
@@ -303,11 +429,11 @@
       return api;
     };
     
+    /*
+    DATA STUFF
+    */
     
-    api.update_issues_data = function(evt, callback){
-      // asynchronously load the issue data... won't traverse any urls (e.g. 
-      // comments)
-      
+    api.repo_countdown_to = function(callsback){
       // counter for the different callbacks to update
       var repos_left = my.cfg.repos.length;
       
@@ -315,11 +441,18 @@
       function repo_done(){
         repos_left--;
         if(repos_left) return;
-        api.update_issues_ui();
-        if(callback){
-          callback();
-        }
+        callsback.filter(_.isFunction).map(function(x){x();});
       }
+      
+      return repo_done;
+    };
+    
+    api.update_issues_data = function(evt, callback){
+      // asynchronously load the issue data... won't traverse any urls (e.g. 
+      // comments)
+      
+      // counter for the different callbacks to update
+      var repo_done = api.repo_countdown_to([api.update_issues_ui, callback]);
       
       my.cfg.repos.map(function(owner_repo){
         owner_repo = owner_repo.split("/");
@@ -342,6 +475,22 @@
       });
       
       return api;
+    };
+    
+    api.update_repos_data = function(evt, callback){
+      // pull down a tree of the repos' files suitable for display in a treemap
+      
+      var repo_done = api.repo_countdown_to([api.update_repos_ui, callback]);
+      
+      my.cfg.repos.map(function(owner_repo){
+        owner_repo = owner_repo.split("/");
+        var repo = my.gh.getRepo(owner_repo[0], owner_repo[0]);
+        
+        repo.getTree('master?recursive=true', function(err, tree) {
+          my.repos[owner_repo] = tree;
+          repo_done();
+        });
+      });
     };
 
     // master api return to public users
