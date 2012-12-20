@@ -102,12 +102,11 @@
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect3990"
-       width="88.954521"
-       height="87.907997"
+       width="88"
+       height="88"
        x="264.88193"
-       y="204.50781"
-       ry="5.6177454"
-       rx="5.6177454" />
+       y="204.4158"
+       ry="17.585985" />
   </g>
   <g
      inkscape:groupmode="layer"

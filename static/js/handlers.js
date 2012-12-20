@@ -1,5 +1,8 @@
-;(function(fragile, d3, moment){
-  var issues = fragile.handlers.issues = {};
+;(function(fragile, d3, moment, _){
+  "use strict";
+  // should be mostly self-documenting
+  
+  var issues = fragile.handlers.issues;
   
   issues.title = {
       gh_field: "title",
@@ -42,7 +45,7 @@
           return "translate(" + scale(datum.x) + ",0)";
         });
           
-        block = bin.selectAll("rect")
+        var block = bin.selectAll("rect")
           .data(function(x){return x;});
             
         block.enter().append("rect")
@@ -84,7 +87,7 @@
       var span = d3.select(this).selectAll("span")
         .data([1]);
       
-      span.enter().append("span").attr("class", "label label-info");
+      span.enter().append("span").attr("class", "label");
         
       span.text(moment(value).fromNow());
     }
