@@ -2,7 +2,12 @@
   fragile.handlers.issues = {
     title: {
       name: "title",
-      label: "Title",
+      label: "Title"
+    },
+    
+    number: {
+      name: "number",
+      label: "#",
       handler: function(value, context){
         var a = d3.select(this).selectAll("a")
           .data([1]);

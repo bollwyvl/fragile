@@ -58,33 +58,6 @@
   </div>
 </div>
 
-<div id="login" class="modal hide fade">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Sign In to GitHub</h3>
-  </div>
-  <div class="modal-body">
-    <p>Because this is just some JavaScript (and can't, therefore, store a 
-       Client Secret), you'll have to log in with your GitHub username and 
-       password. I am working on a backend OAuth authenticator that could be 
-       deployed easily to Heroku or App Engine or something.
-       
-       <form class="form-inline">
-         <input id="username" type="text" class="input-small" placeholder="Username">
-         <input id="password" type="password" class="input-small" placeholder="Password">
-       </form>
-    </p>
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">
-      No, Thanks
-    </a>
-    <a href="#" class="btn btn-primary" data-dismiss="modal">
-      <i class="icon-github"></i> Sign In
-    </a>
-  </div>
-</div>
-
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span3">
@@ -103,7 +76,7 @@
             <a class="brand" href="#issues">Issues</a>
             <ul class="nav pull-right">
               <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
-              <li><a href="#" class="columns"><i class="icon-table"></i>Columns</a></li>
+              <li><a href="#" class="columns" data-toggle="modal" data-target="#columns"><i class="icon-table"></i>Columns</a></li>
             </ul>
           </div>
         </div>
@@ -118,7 +91,7 @@
             <a class="brand" href="#issues">Pull Requests</a>
             <ul class="nav pull-right">
               <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
-              <li><a href="#" class="columns"><i class="icon-table"></i>Columns</a></li>
+              <li><a href="#" class="columns" data-toggle="modal" data-target="#columns"><i class="icon-table"></i>Columns</a></li>
             </ul>
           </div>
         </div>
@@ -126,7 +99,61 @@
     </div><!--/span-->
   </div><!--/row-->
 
-  <hr>
+<!-- FORMS -->
+  <div id="login" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Sign In to GitHub</h3>
+    </div>
+    <div class="modal-body">
+      <p>Because this is just some JavaScript (and can't, therefore, store a 
+         Client Secret), you'll have to log in with your GitHub username and 
+         password. I am working on a backend OAuth authenticator that could be 
+         deployed easily to Heroku or App Engine or something.
+       
+         <form class="form-inline">
+           <input id="username" type="text" class="input-small" placeholder="Username">
+           <input id="password" type="password" class="input-small" placeholder="Password">
+         </form>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn" data-dismiss="modal">
+        No, Thanks
+      </a>
+      <a href="#" class="btn btn-primary" data-dismiss="modal">
+        <i class="icon-github"></i> Sign In
+      </a>
+    </div>
+  </div>
+
+  <div id="columns" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Columns for <span></span></h3>
+    </div>
+    <div class="modal-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Enabled</th>
+            <th>Field</th>
+            <th>Description<th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn" data-dismiss="modal">
+        Cancel
+      </a>
+      <a href="#" class="btn btn-primary" data-dismiss="modal">
+        <i class="icon-table"></i> Change
+      </a>
+    </div>
+  </div>
+
 
   <footer>
     <p>&copy; <span class="from_config title"></span> 2012</p>

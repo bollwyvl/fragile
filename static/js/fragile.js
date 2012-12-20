@@ -8,7 +8,8 @@
         gh: null,
         user: null,
         issues: [],
-        pull_requests: []
+        pull_requests: [],
+        columns: {issues: [], pr: []}
       },
       api = {};
 
@@ -39,8 +40,77 @@
       $("#login .btn-primary").on("click", api.login_basic);
       $(".loggedin.yep.action").on("click", api.logout);
       $("#issues .refresh").on("click", api.issues);
+      $("#issues .columns").on("click", api.update_columns("issues"));
+
       $("#pr .refresh").on("click", api.pull_requests);
+      $("#pr .columns").on("click", api.update_columns("pr"));
+      
+      $("#columns .btn-primary").on("click", api.update_issues_ui);
       return api;
+    };
+    
+    api.update_columns = function(parent){
+      return function(){
+        d3.select("#columns h3 span")
+          .text(d3.select("#" + parent + " .brand").text());
+        
+        var hndlr_status = _.map(
+          fragile.handlers[parent],
+          function(col, name){
+            return {
+              enabled: my.columns[parent].indexOf(col) !== -1,
+              label: col.label,
+              desc: col.description,
+              context: col
+            };
+        });
+        
+        var row = d3.select("#columns tbody")
+          .selectAll("tr").data(hndlr_status);
+          
+        row.enter().append("tr");
+        row.exit().remove();
+        
+        var col = row.selectAll("td")
+          .data(function(col){
+            return d3.entries(col)
+              .filter(function(x){return x.key !== "context";})
+              .map(function(datum){
+                datum.context = col;
+                return datum;
+              });
+          });
+        
+        col.enter().append("td");
+        
+        col.each(function(datum, idx){
+          if(datum.key == "enabled"){
+            var check = d3.select(this).selectAll("input")
+              .data([1]);
+              
+            check.enter().append("input")
+              .attr("type", "checkbox");
+            
+            check.property("checked", function(chk){
+              return datum.value;
+            });
+            
+            check.on("click", function(chk){
+              var col = datum.context.context,
+                idx = my.columns.issues.indexOf(col);
+              if(idx === -1){
+                my.columns.issues.push(col);
+              }else{
+                my.columns.issues.splice(idx, 1);
+              }
+            });
+          }else{
+            d3.select(this).text(datum.value);
+          }
+        });
+        
+        return api;
+      };
     };
 
     api.login_basic = function(){
@@ -95,16 +165,21 @@
     
     api.update_issues_ui = function(){
         
-      // this need to be configurable
-      
-      var cols = [
-        "title"
-      ].map(function(x){return fragile.handlers.issues[x];});
+      if(!my.columns.issues.length){
+        // have a default prop?
+        my.columns.issues = [
+          fragile.handlers.issues.number,
+          fragile.handlers.issues.title
+        ];
+      }
       
       var head = d3.select("#issues thead tr")
-        .selectAll("th").data(cols);
+        .selectAll("th").data(my.columns.issues, function(x){
+          return x.name;
+        });
         
       head.enter().append("th");
+      head.exit().remove();
       
       head.text(function(datum){
         return datum.label;
@@ -118,11 +193,15 @@
         
       var col = row.selectAll("td")
         .data(function(datum){
-          return cols.map(function(col){
+          return my.columns.issues.map(function(col){
             return {col: col, val: datum[col.name], ctx: datum};
           });
+        }, function(col){
+          return col.col.name;
         });
-          
+      
+      col.exit().remove();
+      
       col.enter().append("td")
         .attr("class", function(datum){return datum.col.name;});
           
