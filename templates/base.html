@@ -6,11 +6,12 @@
     {% if env == "dev" %}
         {{ super() }}
         {% for style in styles %}
-        <link rel="stylesheet" href="./{{ style }}">
+        <link rel="stylesheet" href="./{{ style }}"/>
         {% endfor %}
     {% else %}
-        <link rel="stylesheet" href="./css/fragile-min.css">
+        <link rel="stylesheet" href="./css/fragile-min.css"/>
     {% endif %}
+    <link rel="shortcut icon" href="static/favicon.png"/>
 {%- endblock %}
 
 {%- block body_content %}
@@ -60,43 +61,7 @@
 
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="span3">
-      <div class="well sidebar-nav">
-        <ul class="nav nav-list">
-          <li class="nav-header">Sidebar</li>
-          <li class="active"><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
-        </ul>
-      </div><!--/.well -->
-    </div><!--/span-->
-    <div class="span9">
-      <div id="issues" class="table table-condensed">
-        <div class="navbar">
-          <div class="navbar-inner">
-            <a class="brand" href="#issues">Issues</a>
-            <ul class="nav pull-right">
-              <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
-              <li><a href="#" class="columns" data-toggle="modal" data-target="#columns"><i class="icon-table"></i>Columns</a></li>
-            </ul>
-          </div>
-        </div>
-        <table>
-          <thead><tr></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div id="pulls">
-        <div class="navbar">
-          <div class="navbar-inner">
-            <a class="brand" href="#issues">Pull Requests</a>
-            <ul class="nav pull-right">
-              <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
-              <li><a href="#" class="columns" data-toggle="modal" data-target="#columns"><i class="icon-table"></i>Columns</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div><!--/span-->
+      {% block main_content %}{% endblock %}
   </div><!--/row-->
 
 <!-- FORMS -->

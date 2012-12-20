@@ -95,7 +95,7 @@ def favicon():
     for size in sizes:
         print("... %sx%s" % (size, size))
         sh.convert(
-            "svg/logo.svg",
+            "design/logo.svg",
             "-resize",
             "%sx%s" % (size, size),
             tmp_file(size))
@@ -104,7 +104,7 @@ def favicon():
     sh.convert(
         *[tmp_file(size) for size in sizes] + [
             "-colors", 256,
-            "dist/favicon.ico"
+            "static/favicon.ico"
         ]
     )
     print(".. cleaning up")

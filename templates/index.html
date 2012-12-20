@@ -1,1 +1,21 @@
 {% extends "base.html" %}
+
+{% block main_content %}
+{% for id, label in [("issues", "Issues"), ("pulls", "Pull Requests")] %}
+<div id="{{ id }}" class="span6">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="#issues">{{ label }}</a>
+      <ul class="nav pull-right">
+        <li><a href="#" class="refresh"><i class="icon-refresh"></i>Refresh</a></li>
+        <li><a href="#" class="columns" data-toggle="modal" data-target="#columns"><i class="icon-table"></i>Columns</a></li>
+      </ul>
+    </div>
+  </div>
+  <table class="table table-condensed">
+    <thead><tr></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+{% endfor %}
+{% endblock %}
