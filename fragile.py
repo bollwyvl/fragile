@@ -3,8 +3,6 @@ import os
 from os.path import join as opj
 from os.path import abspath as opa
 
-import sh
-
 from flask import (
     Flask,
     )

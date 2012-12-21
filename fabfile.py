@@ -6,12 +6,11 @@ fabric tasks for repetitive fragile tasks
 import os
 import sys
 from pprint import pprint
-import json
-import re
 
 from fabric.api import task
 
 import sh
+import pkgutil
 
 PROJECT_ROOT = str(sh.git("rev-parse", **{"show-toplevel": True})).strip()
 
@@ -98,11 +97,15 @@ def favicon():
 def copy_assets():
     proj()
     
-    fbs = os.path.join(os.path.dirname(flask_bootstrap.__file__), "static")
+    fbs = pkgutil.get_loader("flask_bootstrap").filename
+    
+    fbs = os.path.join(fbs, "static")
     
     print(". copying assets ...")
     copy_patterns = {
         "dist/font": sh.glob("%s/font/fontawesome-webfont.*" % fbs),
+        "dist/css": [],
+        "dist/js": [],
     }
 
     for dst, copy_files in copy_patterns.items():
@@ -120,12 +123,11 @@ def html():
     fragile_path = os.path.abspath(os.path.dirname(__file__))
     sys.path.append(fragile_path)
 
-    from app.app import make_app
+    from fragile import make_app
     app = make_app("prod")
     
     prod_files = {
         "dist/index.html": "/dist/",
-        "dist/frame/index.html": "/dist/frame/"
     }
     
     for prod_file, url in prod_files.items():
