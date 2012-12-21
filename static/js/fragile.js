@@ -55,13 +55,13 @@
       var loc = window.location;
       if(loc.hostname.indexOf("github.com") !== -1){
         var owner = loc.hostname.replace(".github.com", ""),
-          repo = loc.pathname.split("/")[0];
+          repo = loc.pathname.split("/")[1];
         my.cfg.repos = [owner + "/" + repo];
       }
       
       // extend config with fragile.json
       var json = $.ajax({
-        url: "./static/fragile.json",
+        url: "./fragile.json",
         dataType: "json",
         async: false,
         error: function(){
