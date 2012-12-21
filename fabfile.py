@@ -162,6 +162,10 @@ def minify():
                         and asset not in sources[min_id]
                 ]
     
+
+    
+    sources["js"][1:1] = [os.path.join(FLASK_BS,"js", "bootstrap.min.js")]
+    
     cfg = open("setup.cfg", "w")
 
     cfg.writelines([

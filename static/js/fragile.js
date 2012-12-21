@@ -11,7 +11,11 @@
     // private configuration
     var my = {
         // externally populated config options, like `fragile.json`
-        cfg: {},
+        cfg: {
+          title: "Fragile",
+          repos: ["bollwyvl/fragile"],
+          users: ["bollwyvl"]
+        },
         // the gh object
         gh: null,
         // shortcut to the current gh user
@@ -462,8 +466,7 @@
       var repo_done = api.repo_countdown_to([api.update_issues_ui, callback]);
       
       my.cfg.repos.map(function(owner_repo){
-        owner_repo = owner_repo.split("/");
-        my.gh.getIssues(owner_repo[0], owner_repo[1])
+        my.gh.getIssues.apply(null, owner_repo.split("/"))
           .list(function(err, issues){
             var urls = _.pluck(my.issues, "url");
             
@@ -490,8 +493,7 @@
       var repo_done = api.repo_countdown_to([api.update_repos_ui, callback]);
       
       my.cfg.repos.map(function(owner_repo){
-        owner_repo = owner_repo.split("/");
-        var repo = my.gh.getRepo(owner_repo[0], owner_repo[0]);
+        var repo = my.gh.getRepo.apply(null, owner_repo.split("/"));
         
         repo.getTree('master?recursive=true', function(err, tree) {
           my.repos[owner_repo] = tree;
