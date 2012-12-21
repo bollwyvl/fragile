@@ -21,6 +21,8 @@ output = dist/%(src)s/fragile-min.%(src)s
 
 """
 
+FLASK_BS = os.path.join(
+    pkgutil.get_loader("flask_bootstrap").filename, "static")
 
 @task
 def proj():
@@ -97,13 +99,9 @@ def favicon():
 def copy_assets():
     proj()
     
-    fbs = pkgutil.get_loader("flask_bootstrap").filename
-    
-    fbs = os.path.join(fbs, "static")
-    
     print(". copying assets ...")
     copy_patterns = {
-        "dist/font": sh.glob("%s/font/fontawesome-webfont.*" % fbs),
+        "dist/font": sh.glob("%s/font/fontawesome-webfont.*" % FLASK_BS),
         "dist/css": [],
         "dist/js": [],
     }
@@ -118,7 +116,6 @@ def copy_assets():
 def html():
     proj()
     print ". generating production html"
-    sh.mkdir("-p", "dist/frame")
     
     fragile_path = os.path.abspath(os.path.dirname(__file__))
     sys.path.append(fragile_path)
@@ -143,7 +140,16 @@ def minify():
 
     sources = dict(js=[], css=[])
     
-    for user in ["./frame", "."]:
+    # blarg
+    # bootstrap
+    sources["css"] = [os.path.join(FLASK_BS, "css", item) for item in 
+        ["bootstrap.no-icons.min.css",
+        "font-awesome.css",
+        "bootstrap-responsive.min.css"]
+    ]
+    
+    
+    for user in ["."]:
         for min_id, asset_list in dict(js="scripts", css="styles").items(): 
             asset_list = os.path.join(user, asset_list+".txt")
             if os.path.exists(asset_list):

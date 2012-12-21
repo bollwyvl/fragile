@@ -46,14 +46,19 @@
 
     api.load_config = function(){
       // extend config with fragile.json
-      try{
-        $.extend(my.cfg, $.parseJSON($.ajax({
-          url: "./static/fragile.json",
-          dataType: "json",
-          async: false
-        }).responseText) || {});
-      } catch(err) {
-        console.log(err);
+      var json = $.ajax({
+        url: "./static/fragile.json",
+        dataType: "json",
+        async: false
+      });
+      
+      if(json.status !== 404){
+        try{
+          var json_cfg = $.parseJSON(json.responseText); 
+          $.extend(my.cfg, json_cfg || {});
+        } catch(err) {
+          console.log(err);
+        }
       }
       
       return api;

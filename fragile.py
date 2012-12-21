@@ -31,8 +31,8 @@ def make_app(env="dev"):
             ),
         "prod": dict(
             static_url_path="/dist",
-            template_folder="..",
-            static_folder=opa(opj(app_home, "..", "dist"))
+            template_folder="./templates",
+            static_folder=opa(opj(app_home, "dist"))
             ),
         "test": dict(
             static_url_path="/dist",
