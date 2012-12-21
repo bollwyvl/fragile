@@ -170,9 +170,14 @@ developers are involved. From ipython-dev:
 
 I want more lasers in my development!
 
-# Thanks
+# Free Software, Thanks!
+Fragile is free for you to use and extend under the terms of the
+[MIT License](LICENSE). Its development would not be possible without the
+help of the many libraries and frameworks it uses.
+
 ## API
 - [GitHub](http://github.com)
+
 ## Frontend
 - [Bootstrap](http://twitter.github.com/bootstrap)
 - [moment.js](http://momentjs.com/)
@@ -180,6 +185,7 @@ I want more lasers in my development!
 - [jQuery](http://jquery.com/)
 - [underscore.js](http://underscorejs.org/)
 - [github.js](https://github.com/michael/github)
+
 ## Backend
 - [flask](http://flask.pocoo.org/)
 - [werkzeug](http://werkzeug.pocoo.org/)
