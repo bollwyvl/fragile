@@ -29,7 +29,7 @@
         .range([200, 0]);
         
       var color = d3.scale.category20()
-        .domain(config.users);
+        .domain(config.collaborators);
         
       // call the async method, update whenevs
       value(function(err, comments){
@@ -73,7 +73,7 @@
       
       value(function(err, comments){
         var users = comments.reduce(function(result, cmnt){
-          if(config.users.indexOf(cmnt.user.login) !== -1){ 
+          if(config.collaborators.indexOf(cmnt.user.login) !== -1){ 
             result[cmnt.user.login] = cmnt.user.avatar_url;
           }
           return result;

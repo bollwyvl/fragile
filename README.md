@@ -64,16 +64,16 @@ like you use a `devel` branch for pull requests, you can use it like this:
      }
   }
 
-### `users`
-_Default: the folks listed as developers on the repos(s)_
+### `collaborators`
+_Default: the folks listed as collaborators on the repos(s)_
 
 All developers are created equal... except for some, who are more equal: they
-can commit to the public repo. Several of the columns light up committers who
+can commit to the public repo. Several of the columns light up collaborators who
 are doing stuff on tickets and pull requests. If you want to set this manually,
 you'll get what you ask for.
 
   {
-    "users": ["user1", "user2"]
+    "collaborators": ["user1", "user2"]
   }
 
 # What is the repo?

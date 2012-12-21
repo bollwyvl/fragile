@@ -12,9 +12,9 @@
     var my = {
         // externally populated config options, like `fragile.json`
         cfg: {
-          title: "Fragile",
-          repos: ["bollwyvl/fragile"],
-          users: ["bollwyvl"]
+          title: "",
+          repos: [],
+          collaborators: []
         },
         // the gh object
         gh: null,
@@ -38,10 +38,12 @@
       api.load_config()
         .init_ui()
         .install_actions();
+      
+      return api;
     };
     
     api.init_ui = function(){
-      // do more stuff based on config, i suppose
+      // do more stuff based on config, i suppose... might not be much loaded
       $(".title.from_config").text(my.cfg.title);
       $("title").text(my.cfg.title);
 
@@ -49,11 +51,23 @@
     };
 
     api.load_config = function(){
+      // do the best guess of the config
+      var loc = window.location;
+      if(loc.hostname.indexOf("github.com") !== -1){
+        var owner = loc.hostname.replace(".github.com", ""),
+          repo = loc.pathname.split("/")[0];
+        my.cfg.repos = [owner + "/" + repo];
+      }
+      
       // extend config with fragile.json
       var json = $.ajax({
         url: "./static/fragile.json",
         dataType: "json",
-        async: false
+        async: false,
+        error: function(){
+          console.log("Hi, there! It's no big deal if you don't have a " +
+           "fragile.json! it's just for fancy configuration stuff.");
+        }
       });
       
       if(json.status !== 404){
@@ -61,7 +75,8 @@
           var json_cfg = $.parseJSON(json.responseText); 
           $.extend(my.cfg, json_cfg || {});
         } catch(err) {
-          console.log(err);
+          console.log("Something was wrong with fragile.json\n",
+            err.stack);
         }
       }
       
@@ -105,8 +120,20 @@
     
     api.gh_api_available = function(){
       // hooray, we have data. let's get busy
-      api.update_issues_data();
-      api.update_repos_data();
+      
+      var data_calls = function(){
+        api.update_issues_data();
+        api.update_repos_data();
+      };
+      
+      if(!my.cfg.collaborators.length){
+        // check this out before getting users... might need it for rendering
+        // eventually this will update my.cfg.collaborators
+        api.update_collaborators_data(null, data_calls);
+      }else{
+        data_calls();
+      }
+      
     };
 
     api.logout = function(){
@@ -468,23 +495,47 @@
       my.cfg.repos.map(function(owner_repo){
         my.gh.getIssues.apply(null, owner_repo.split("/"))
           .list(function(err, issues){
-            var urls = _.pluck(my.issues, "url");
+            if(err){
+              console.log(err);
+            }else{
+              var urls = _.pluck(my.issues, "url");
             
-            issues.map(function(issue){
-              var issue_idx = urls.indexOf(issue.url);
+              issues.map(function(issue){
+                var issue_idx = urls.indexOf(issue.url);
               
-              if(issue_idx === -1){
-                my.issues.push(issue);
-              }else{
-                my.issues[issue_idx] = issue;
-              }
-            });
-            
+                if(issue_idx === -1){
+                  my.issues.push(issue);
+                }else{
+                  my.issues[issue_idx] = issue;
+                }
+              });
+            }
             repo_done();
           });
       });
       
       return api;
+    };
+    
+    api.update_collaborators_data = function(evt, callback){
+      
+      var repo_done = api.repo_countdown_to([callback]);
+      
+      my.cfg.repos.map(function(owner_repo){
+        var repo = my.gh.getRepo.apply(null, owner_repo.split("/"));
+        
+        repo.collaborators(function(err, collaborators) {
+          if(err){
+            console.log(err);
+          }else{
+            my.cfg.collaborators.push.apply(
+              my.cfg.collaborators,
+              _.pluck(collaborators, "login")
+            );
+          }
+          repo_done();
+        });
+      });
     };
     
     api.update_repos_data = function(evt, callback){
@@ -496,7 +547,11 @@
         var repo = my.gh.getRepo.apply(null, owner_repo.split("/"));
         
         repo.getTree('master?recursive=true', function(err, tree) {
-          my.repos[owner_repo] = tree;
+          if(err){
+            console.log(err);
+          }else{
+            my.repos[owner_repo] = tree;
+          }
           repo_done();
         });
       });
