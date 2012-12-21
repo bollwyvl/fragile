@@ -61,11 +61,12 @@ git push origin gh-pages
 Then go to your GitHub page http://sweetusername.github.com/yourrepo/fragile, 
 login and BOOM!
 
-# Customization with `config.json`
+# Customization with `fragile.json`
 Fragile should handle the sunny day pretty easily: serving from GitHub Pages on 
 the single repo you want to view. However, if you have a more complicated setup 
 (multiple repositories in an organization, perhaps), Fragile can meet your 
-needs without any javascript hackery. Create a `config.json` next to `index.html`, and fiddle with the things you see below.
+needs without any javascript hackery. Create a `fragile.json` next to 
+`index.html`, and fiddle with the things you see below.
 
 ### `title`
 _Default: the title of the repo from which GitHub Page it is served_
