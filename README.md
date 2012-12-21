@@ -1,3 +1,6 @@
+  
+# WARNING: Still figuring out the build process, so most of the stuff below isn't QUITE true.
+
 # Fragile
 For when you have too many issues... too many GitHub issues. And pull requests.
 
