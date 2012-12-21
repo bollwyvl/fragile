@@ -47,14 +47,16 @@ the registration process until an [OAuth backend](https://github.com/bollwyvl/fr
 ## Get it
 In your repo:
 
-  git checkout -b gh-pages    # -b will create it, if you don't have it
-  mkdir fragile               # or whatever you want to call it
-  cd fragile
-  git clone git clone -b gh-pages git://github.com/bollwyvl/fragile.git . 
-  rm -rf .git                 # whoa, watch out, there
-  git add fragile
-  git commit -m "enabling ticket pull request fusion goodness"
-  git push origin gh-pages
+```sh
+git checkout -b gh-pages    # -b will create it, if you don't have it
+mkdir fragile               # or whatever you want to call it
+cd fragile
+git clone git clone -b gh-pages git://github.com/bollwyvl/fragile.git . 
+rm -rf .git                 # whoa, watch out, there
+git add fragile
+git commit -m "enabling ticket pull request fusion goodness"
+git push origin gh-pages
+```
 
 Then go to your GitHub page http://sweetusername.github.com/yourrepo/fragile, 
 login and BOOM!
@@ -71,9 +73,11 @@ A nice little title that gets added up in the top right. Also rocks it into the
 footer with a snazzy &copy;. Man, I wish my keyboard had an &copy; key. I would
 &copy; everything.
 
-    {
-      "title": "My Repo"
-    }
+```json
+{
+  "title": "My Repo"
+}
+```
 
 ### `repos`
 _Default: the repo from which GitHub Page it is served_
@@ -81,20 +85,24 @@ _Default: the repo from which GitHub Page it is served_
 A list of repositories to track. If specified, you won't get the "default" repo 
 (the one you are looking at), so make sure to put that one in.
 
-    {
-      "repositories": ["user/repo", "other-user/other-repo"]
-    }
+```json
+{
+  "repositories": ["user/repo", "other-user/other-repo"]
+}
+```
 
 #### Future Feature: show more than `master`
 By default, you'll get the `master` for each of your repos. If this is not cool,
 like you use a `devel` branch for pull requests, you can use it like this:
 
-    {
-       "repositories": {
-         "user/repo": "master",
-         "other-user/other-repo": ["master", "devel"]
-       }
-    }
+```json
+{
+   "repositories": {
+     "user/repo": "master",
+     "other-user/other-repo": ["master", "devel"]
+   }
+}
+```
 
 ### `collaborators`
 _Default: the folks listed as collaborators on the repos(s)_
@@ -104,10 +112,11 @@ can commit to the offical repo. Several of the columns light up collaborators
 who are doing stuff on tickets and pull requests. If you want to set this 
 manually, you'll get what you ask for.
 
-    {
-      "collaborators": ["user1", "user2"]
-    }
-
+```json
+{
+  "collaborators": ["user1", "user2"]
+}
+````
 # What is this repo?
 Even though Fragile is just HTML and JavaScript, I still haven't found the love 
 that is node.js development: this is my cut-down development stack based on 
