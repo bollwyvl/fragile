@@ -213,7 +213,7 @@
       
       // call custom handlers, or just put in text from the ui
       col.each(function(cell){
-        if(!cell.cfg.col.handler) return d3.select(this).text(cell.val);
+        if(!cell.cfg.col.handler){return d3.select(this).text(cell.val);}
         
         cell.cfg.col.handler.call(this, cell.val, cell.ctx, my.cfg);
       });
@@ -274,7 +274,7 @@
           height = 300;
       
       var children = function(path_or_file){
-        if(path_or_file.type == "blob") return [];
+        if(path_or_file.type === "blob"){return [];}
         
         return d3.values(path_or_file.children);
       };
@@ -440,7 +440,9 @@
       // called by the asynchronous readers to decrement the repo count
       function repo_done(){
         repos_left--;
-        if(repos_left) return;
+        
+        if(repos_left){return;}
+        
         callsback.filter(_.isFunction).map(function(x){x();});
       }
       
