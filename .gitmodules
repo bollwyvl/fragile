@@ -10,3 +10,6 @@
 [submodule "dist"]
 	path = dist
 	url = https://github.com/bollwyvl/fragile.git
+[submodule "static/lib/awesome"]
+	path = static/lib/awesome
+	url = https://github.com/gregoryloucas/Font-Awesome-More.git

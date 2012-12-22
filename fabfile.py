@@ -101,7 +101,7 @@ def copy_assets():
     
     print(". copying assets ...")
     copy_patterns = {
-        "dist/font": sh.glob("%s/font/fontawesome-webfont.*" % FLASK_BS),
+        "dist/font": sh.glob("./static/lib/awesome/font/*"),
         "dist/css": [],
         "dist/js": [],
     }
@@ -144,7 +144,6 @@ def minify():
     # bootstrap
     sources["css"] = [os.path.join(FLASK_BS, "css", item) for item in 
         ["bootstrap.no-icons.min.css",
-        "font-awesome.css",
         "bootstrap-responsive.min.css"]
     ]
     
