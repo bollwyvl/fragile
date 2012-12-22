@@ -10,7 +10,7 @@ static/lib/github/lib/underscore-min.js
 static/lib/github/github.js
 
 # d3
-static/lib/d3/d3.v2.min.js
+static/lib/d3/d3.min.js
 
 # moment
 static/lib/moment/min/moment.min.js
