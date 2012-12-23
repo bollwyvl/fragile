@@ -119,7 +119,7 @@ manually, you'll get what you ask for.
 }
 ````
 
-### TODO: `landing`
+### `landing`
 _Default: the distributed what is fragile intro_
 
 A path to an SVG file (probably needs to be relative), such as can be made with 
@@ -133,7 +133,7 @@ styles:
 }
 ```
 
-#### build
+#### TODO: build
 ```json
 {
   "landing":[
@@ -147,7 +147,7 @@ Will load `landing.svg`, then wait for the user to click before hiding
 printed from [LibreOffice](http://libreoffice.org) then converted into SVG with 
 Inkscape or  [pdf2svg](http://www.cityinthesky.co.uk/opensource/pdf2svg).
 
-#### id list
+#### TODO: id list
 Fade in IDs for Inkscape-style layered building: automated or delay.
 _Currently partially implemented and will be refatored out and refined_
 

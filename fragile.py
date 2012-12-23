@@ -51,12 +51,7 @@ def make_app(env="dev"):
 
     @app.route(url_root)
     def home():
-        svg = "\n".join(open("static/svg/landing.svg","r")
-            .readlines()[2:]
-          ).replace('id="svg2"', 'id="landing_svg"')
-        kwargs = {
-          "landing_svg": svg
-        }
+        kwargs = {}
         
         if env != "test":
             kwargs.update(assets())

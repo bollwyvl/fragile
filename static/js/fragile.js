@@ -29,6 +29,7 @@
         repos: {},
         // column view configurations
         columns: {issues: [], pulls: []},
+        landing: null,
         // move this later
         layer_order: []
       },
@@ -50,9 +51,23 @@
       $(".title.from_config").text(my.cfg.title);
       $("title").text(my.cfg.title);
       
-      api.play_landing();
+      api.load_landing(api.play_landing);
       
       return api;
+    };
+    
+    api.load_landing = function(callback){
+      // the absolute minimum right now... does enable the `basic` usage model
+      if(my.landing === null){
+        my.landing = "static/svg/landing.svg";
+      }
+      
+      d3.xml(my.landing, "image/svg+xml", function(xml) {
+          var importedNode = window.document.importNode(
+            xml.documentElement, true);
+          d3.select("#landing").node().appendChild(importedNode);
+          callback();
+      });
     };
     
     api.play_landing = function(){
