@@ -2,7 +2,7 @@
   "use strict";
   // should be mostly self-documenting
   
-  var issues = fragile.handlers.issues;
+  var issues = {};
   
   issues.title = {
       gh_field: "title",
@@ -133,5 +133,9 @@
     label: "Updated",
     description: "When the issue was last updated"
   }).value();
+  
+  var pulls = {};
+  
+  fragile.handlers({issues: issues, pulls: pulls});
   
 }).call(this, fragile, d3, moment, _);

@@ -1,11 +1,17 @@
 ;(function(GH, $, _, d3){
   "use strict";
+  
+  
+  
   // not planning on actually making this work on the server, but _ does it
   var window = this,
     phi = (1 + Math.sqrt(5) ) / 2;
   
   // for jslint and firefox
   var console = window.console || {log: function(){}};
+
+  // library variables
+  var lib = {handlers: {}};
 
   // globally exposed, with shortcut
   var fragile = window.fragile = function(){
@@ -15,7 +21,8 @@
         cfg: {
           title: "",
           repos: [],
-          collaborators: []
+          collaborators: [],
+          lander: null
         },
         // the gh object
         gh: null,
@@ -31,7 +38,9 @@
         columns: {issues: [], pulls: []},
         landing: null,
         // move this later
-        layer_order: []
+        layer_order: [],
+        handlers: lib.handlers,
+        lander: lib.lander
       },
       // the publicly exposed api: see the bottom of the file. all members
       // should return this for chainiliciousness
@@ -305,7 +314,7 @@
       // might should be an actual scoped object... also, initialization?
       return {
         col_name: col_name,
-        col: fragile.handlers[parent][col_name]
+        col: my.handlers[parent][col_name]
       };
     };
     
@@ -502,7 +511,7 @@
         
         // ugly munging, but need to keep around a lot of stuff
         var hndlr_status = _.map(
-          fragile.handlers[parent],
+          my.handlers[parent],
           function(col, name){
             return {
               enabled: enabled_idx(name) !== -1,
@@ -673,17 +682,36 @@
         });
       });
     };
+    
+    api.install_handlers = function(handlers){
+      my.handlers = handlers;
+      
+      return api;
+    };
+    
+    api.install_lander = function(lander){
+      my.lander = lander;
+      
+      return api;
+    };
 
     // master api return to public users
     return api;
   };
 
-// namespaced handler for datatypes... see handlers.js
-fragile.handlers = {issues: {}, pulls: {}};
 
-// fire it up
-fragile().init();
 
+fragile.handlers = function(handlers){
+  if(!arguments.length){return _.clone(lib.handlers);}
+  
+  _.extend(lib.handlers, handlers);
+};
+    
+fragile.lander = function(lander){
+  if(!arguments.length){return _.clone(lib.lander);}
+  
+  lib.lander = lander;
+};
 // documents dependencies, etc. the call(this...) ensures we don't use any
 // naked `window` or `document` references
 }).call(this, Github, $, _, d3);
