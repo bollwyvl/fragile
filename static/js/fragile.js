@@ -56,9 +56,8 @@
     api.play_landing = function(){
       var win = $(window),
         layer1 = d3.select("#landing #layer1"),
-        rx = $(window).height() / $(window).width();
-      
-      
+        rx = $(window).height() / $(window).width(),
+        layers = api.inkscape_layers();
       
       layer1.attr("transform", "scale("+ rx +") " + layer1.attr("transform"));
       
@@ -68,6 +67,48 @@
         .style("visibility", "visible")
       .transition()
         .style("opacity", 100);
+        
+      
+
+      layers.style("opacity", 0);
+      
+      // move this later
+      var layer_order = [
+        "main",
+        "your community",
+        "your data",
+        "your browser",
+        "community",
+        "apis",
+        "browsers"
+      ];
+        
+      layers.transition()
+        .delay(function(d, i){
+          var ink_label = this.attributes["inkscape:label"].value,
+            build_order = layer_order.indexOf(ink_label);
+          return build_order * 1000 * phi;
+        })
+        .style("opacity", 100);
+      
+        /*
+      layers.transition()
+          .delay(function(d, i){return (+this.id.slice(5,this.id.length)) * 1000*phi})
+          .style("opacity", 100);
+          */
+    };
+    
+    api.inkscape_layers = function(){
+      // do better!
+      var prefix = "layer",
+        layers = d3.selectAll("g")
+          .filter(function(){
+            return d3.select(this).attr("id").slice(0,prefix.length) === prefix;
+          });
+      
+      layers = layers.data(d3.range(layers[0].length))
+        .filter(function(){return this;});
+        return layers;
     };
 
     api.load_config = function(){
