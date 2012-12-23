@@ -11,31 +11,28 @@
   
     api.load_landing = function(callback){
       // the absolute minimum right now... does enable the `basic` usage model
-      if(_.isObject(cfg.landing)){
+      if(cfg.landing === null || cfg.landing === undefined){
+        cfg.landing = "static/svg/landing.svg";
+      }
+      
+      if(_.isString(cfg.landing)){
+          d3.xml(cfg.landing, "image/svg+xml", function(xml) {
+              var importedNode = window.document.importNode(
+                xml.documentElement, true);
+              d3.select("#landing").node().appendChild(importedNode);
+              callback();
+          });
+      }else if(_.isObject(cfg.landing)){
         console.log("not implemented");
         return;
       }else if(_.isArray(cfg.landing)){
         console.log("not implemented");
         return;
-      }else if(_.isString(cfg.landing)){
-        console.log("not implemented");
-        return;
-      }else{
-        // this is "", null, 0, false or whatever
-        cfg.landing = "static/svg/landing.svg";
       }
-      
-      d3.xml(cfg.landing, "image/svg+xml", function(xml) {
-          var importedNode = window.document.importNode(
-            xml.documentElement, true);
-          d3.select("#landing").node().appendChild(importedNode);
-          callback();
-      });
     };
     
     api.play_landing = function(){
-      // TODO: it would be great if one could drop an inkscape file in...
-      // fragile.svg?
+      // this is the basic case... TODO: refactor
       var win = $(window),
         layer1 = d3.select("#landing #layer1"),
         svg = d3.select("#landing svg"),
