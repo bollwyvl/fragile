@@ -56,40 +56,57 @@
     api.play_landing = function(){
       var win = $(window),
         layer1 = d3.select("#landing #layer1"),
-        rx = $(window).height() / $(window).width(),
-        layers = api.inkscape_layers();
+        svg = d3.select("#landing svg"),
+        rx = Math.min(
+          $(window).height() / svg.attr("height"),
+          $(window).width() / svg.attr("width")
+        ) * 0.9,
+        layers = api.inkscape_layers(),
+        wpx = (rx * svg.attr("width") + 5)+"px",
+        hpx = (rx * svg.attr("height") + 5)+"px";
+        
+      svg.attr("width", wpx)
+        .attr("height", hpx);
       
+        // clean up layer 1
       layer1.attr("transform", "scale("+ rx +") " + layer1.attr("transform"));
       
-      d3.select("#landing")
-        .style("width", (win.width() - 20) + "px")
-        .style("opacity", 0)
-        .style("visibility", "visible")
-      .transition()
-        .style("opacity", 100);
-        
-      
-
       layers.style("opacity", 0);
       
       // move this later
       var layer_order = [
         "main",
-        "your community",
-        "your data",
+        "data",
         "your browser",
-        "community",
-        "apis",
-        "browsers"
+        "browsers",
+        "main",
+        "your data",
+        "your community",
+        "community"
       ];
+      
+      d3.select("#landing")
+        .style("width", wpx)
+        .style("opacity", 0)
+        .style("visibility", "visible")
+      .transition()
+        .style("opacity", 100)
+      .transition()
+        .each(function(datum, idx){
+          if(idx){return;}
+          
+          layers.transition()
+            .delay(function(d, i){
+              var ink_label = this.attributes["inkscape:label"].value,
+                build_order = layer_order.indexOf(ink_label);
+              return build_order * 1000;
+            })
+            .style("opacity", 100);
+          
+        });
         
-      layers.transition()
-        .delay(function(d, i){
-          var ink_label = this.attributes["inkscape:label"].value,
-            build_order = layer_order.indexOf(ink_label);
-          return build_order * 1000 * phi;
-        })
-        .style("opacity", 100);
+      layers.style("opacity", 0);
+        
       
         /*
       layers.transition()
