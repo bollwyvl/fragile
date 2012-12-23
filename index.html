@@ -18,7 +18,7 @@
   </head>
 
   <body>
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-bottom">
   <div class="navbar-inner">
     <div class="container-fluid">
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -53,9 +53,12 @@
             </li>
         </ul>
         <ul class="nav">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li class="active"><a href="#repos">Repos</a></li>
+          <li><a href="#collaborators">Collaborators</a></li>
+          <li><a href="#issues">Issues</a></li>
+          <li><a href="#pr">Pull Requests</a></li>
+          <li><a href="#wiki" rel="tooltip" title="coming soon">Wiki</a></li>
+          <li><a href="#threads" rel="tooltip" title="coming soon">Threads</a></li>
         </ul>
       </div><!--/.nav-collapse -->
     </div>
@@ -63,7 +66,8 @@
 </div>
 
 <div class="container-fluid">
-
+<div id="landing"></div>
+<div id="app">
 <div class="container-fluid">
   <div class="row-fluid">
     <div id="repos" class="span12">
@@ -138,7 +142,7 @@
     
   </div><!-- row -->
 </div><!-- container -->
-
+</div></div>
 
 <!-- FORMS -->
   <div id="login" class="modal hide fade">
@@ -194,15 +198,15 @@
       </a>
     </div>
   </div>
-
-
-  <footer>
-    <p>&copy; <span class="from_config title"></span> 2012</p>
-  </footer>
 </div>
     
         <script type="text/javascript" src="./js/fragile-min.js"></script>
     
+    <script type="text/javascript">
+      ;(function(){
+        // fire it up
+        fragile("./").init();
+      }).call(this);
+    </script>
   </body>
-  <!-- Font Awesome is licensed CC-BY-3.0: http://fortawesome.github.com/Font-Awesome -->
 </html>

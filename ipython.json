@@ -1,0 +1,17 @@
+{
+  "title": "IPython",
+  "repos": ["ipython/ipython"],
+  "users": [
+    "bfroehle",
+    "Carreau",
+    "ellisonbg",
+    "epatters",
+    "fperez",
+    "ivanov",
+    "jdmarch",
+    "jstenar",
+    "minrk",
+    "rkern"
+    ],
+  "landing": "svg/ipython.svg"
+}
