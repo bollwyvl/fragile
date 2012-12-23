@@ -60,7 +60,7 @@
         rx = Math.min(
           $(window).height() / svg.attr("height"),
           $(window).width() / svg.attr("width")
-        ) * 0.9,
+        ) * 0.8,
         layers = api.inkscape_layers(),
         wpx = (rx * svg.attr("width") + 5)+"px",
         hpx = (rx * svg.attr("height") + 5)+"px";

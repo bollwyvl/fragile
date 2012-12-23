@@ -8,8 +8,8 @@ body {
 
 #landing{
   visibility: hidden;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 20px auto 0 auto;
+  
   overflow: hidden;
 }
 
