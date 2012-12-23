@@ -22,7 +22,8 @@
           title: "",
           repos: [],
           collaborators: [],
-          lander: null
+          handlers: {},
+          lander: {}
         },
         // the gh object
         gh: null,
@@ -36,15 +37,16 @@
         repos: {},
         // column view configurations
         columns: {issues: [], pulls: []},
-        landing: null,
         // move this later
-        layer_order: [],
-        handlers: lib.handlers,
-        lander: lib.lander
+        layer_order: []
       },
       // the publicly exposed api: see the bottom of the file. all members
       // should return this for chainiliciousness
       api = {};
+
+      // handlers, right now for grid... TODO: refactor like lander
+      my.handlers = lib.handlers;
+      my.lander = lib.lander(my.cfg.lander);
 
     api.init = function(){
       // page just loaded, do some stuff... no data yet
@@ -60,98 +62,9 @@
       $(".title.from_config").text(my.cfg.title);
       $("title").text(my.cfg.title);
       
-      api.load_landing(api.play_landing);
+      my.lander.show();
       
       return api;
-    };
-    
-    api.load_landing = function(callback){
-      // the absolute minimum right now... does enable the `basic` usage model
-      if(my.landing === null){
-        my.landing = "static/svg/landing.svg";
-      }
-      
-      d3.xml(my.landing, "image/svg+xml", function(xml) {
-          var importedNode = window.document.importNode(
-            xml.documentElement, true);
-          d3.select("#landing").node().appendChild(importedNode);
-          callback();
-      });
-    };
-    
-    api.play_landing = function(){
-      // TODO: it would be great if one could drop an inkscape file in...
-      // fragile.svg?
-      var win = $(window),
-        layer1 = d3.select("#landing #layer1"),
-        svg = d3.select("#landing svg"),
-        rx = Math.min(
-          $(window).height() / svg.attr("height"),
-          $(window).width() / svg.attr("width")
-        ) * 0.8,
-        layers = api.inkscape_layers(),
-        wpx = (rx * svg.attr("width") + 5)+"px",
-        hpx = (rx * svg.attr("height") + 5)+"px",
-        layer_order = api.layer_order();
-        
-      svg.attr("width", wpx)
-        .attr("height", hpx);
-      
-        // clean up layer 1
-      layer1.attr("transform", "scale("+ rx +") " + layer1.attr("transform"));
-      
-      layers.style("opacity", 0);
-      
-      d3.select("#landing")
-        .style("width", wpx)
-        .style("opacity", 0)
-        .style("visibility", "visible")
-      .transition()
-        .style("opacity", 100)
-      .transition()
-        .each(function(datum, idx){
-          // TODO: it's gotta work better
-          if(idx){return;}
-          layers.transition()
-            .delay(function(d, i){
-              var ink_label = this.attributes["inkscape:label"].value,
-                build_order = layer_order.indexOf(ink_label);
-              return build_order * 1000;
-            })
-            .style("opacity", 100);
-        });
-        
-      layers.style("opacity", 0);
-        
-      
-        /*
-      layers.transition()
-          .delay(function(d, i){return (+this.id.slice(5,this.id.length)) * 1000*phi})
-          .style("opacity", 100);
-          */
-    };
-    
-    api.inkscape_layers = function(){
-      // do better!
-      var prefix = "layer",
-        layers = d3.selectAll("g")
-          .filter(function(){
-            return d3.select(this).attr("id").slice(0,prefix.length) === prefix;
-          });
-      
-      layers = layers.data(d3.range(layers[0].length))
-        .filter(function(){return this;});
-        return layers;
-    };
-    
-    api.layer_order = function(){
-      var layer_names = [];
-      
-      api.inkscape_layers().each(function(){
-        layer_names.push(this.attributes["inkscape:label"].value);
-      });
-      layer_names.sort();
-      return layer_names;
     };
 
     api.load_config = function(){
@@ -683,17 +596,6 @@
       });
     };
     
-    api.install_handlers = function(handlers){
-      my.handlers = handlers;
-      
-      return api;
-    };
-    
-    api.install_lander = function(lander){
-      my.lander = lander;
-      
-      return api;
-    };
 
     // master api return to public users
     return api;
