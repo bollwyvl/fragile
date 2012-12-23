@@ -104,6 +104,8 @@ def copy_assets():
         "dist/font": sh.glob("./static/lib/awesome/font/*"),
         "dist/css": [],
         "dist/js": [],
+        "dist/svg": sh.glob("./static/svg/*"),
+        "dist": sh.glob("./static/config/*"),
     }
 
     for dst, copy_files in copy_patterns.items():

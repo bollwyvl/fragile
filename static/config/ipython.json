@@ -13,5 +13,5 @@
     "minrk",
     "rkern"
     ],
-  "landing": "static/svg/ipython.svg"
+  "landing": "svg/ipython.svg"
 }

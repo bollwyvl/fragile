@@ -19,4 +19,3 @@ static/lib/moment/min/moment.min.js
 static/js/fragile.js
 static/js/handlers.js
 static/js/lander.js
-static/js/app.js

@@ -14,7 +14,8 @@
   var lib = {handlers: {}};
 
   // globally exposed, with shortcut
-  var fragile = window.fragile = function(){
+  var fragile = window.fragile = function(static_path){
+    static_path = static_path.length ? static_path : "./";
     // private configuration
     var my = {
         // externally populated config options, like `fragile.json`
@@ -46,7 +47,9 @@
 
       // handlers, right now for grid... TODO: refactor like lander
       my.handlers = lib.handlers;
-      my.lander = lib.lander(function(attr){return my.cfg.landing;});
+      my.lander = lib.lander(
+        function(attr){return my.cfg.landing;},
+         static_path);
 
     api.init = function(){
       // page just loaded, do some stuff... no data yet
@@ -70,7 +73,7 @@
     api.load_config = function(){
       // do the best guess of the config
       var loc = window.location,
-        static_loc = "./fragile.json";
+        static_loc = static_path + "fragile.json";
       
       if(loc.hostname.indexOf("github.com") !== -1){
         var owner = loc.hostname.replace(".github.com", ""),
@@ -78,7 +81,7 @@
         my.cfg.repos = [owner + "/" + repo];
       }else if(loc.search.length){
         // allow single hosted instance?
-        static_loc = loc.search.slice(2)+".json";
+        static_loc = static_path + loc.search.slice(2)+".json";
       }
       
       // extend config with fragile.json
@@ -87,7 +90,7 @@
         dataType: "json",
         async: false,
         error: function(){
-          console.log("Hi, there! It's no big deal if you don't have a " +
+          console.info("Hi, there! It's no big deal if you don't have a " +
            "fragile.json! It's just for fancy configuration stuff that can't " +
            "be figured out from where you host it (like localhost!). Here's " +
            "your config right now",
@@ -535,7 +538,7 @@
         my.gh.getIssues.apply(null, owner_repo.split("/"))
           .list(function(err, issues){
             if(err){
-              console.log(err);
+              console.error(err);
             }else{
               var urls = _.pluck(my.issues, "url");
             
@@ -565,7 +568,7 @@
         
         repo.collaborators(function(err, collaborators) {
           if(err){
-            console.log(err);
+            console.error(err);
           }else{
             my.cfg.collaborators.push.apply(
               my.cfg.collaborators,
@@ -587,7 +590,7 @@
         
         repo.getTree('master?recursive=true', function(err, tree) {
           if(err){
-            console.log(err);
+            console.error(err);
           }else{
             my.repos[owner_repo] = tree;
           }
@@ -600,8 +603,6 @@
     // master api return to public users
     return api;
   };
-
-
 
 fragile.handlers = function(handlers){
   if(!arguments.length){return _.clone(lib.handlers);}

@@ -5,14 +5,14 @@
     console = window.console || {log: function(){}};
   
   // should be mostly self-documenting
-  var lander = function(config_callback){
+  var lander = function(config_callback, static_path){
     var cfg = config_callback,
       api = {};
 
   
     api.show = function(callback){
       var landing = cfg();
-      var default_svg = "static/svg/landing.svg";
+      var default_svg = static_path + "svg/landing.svg";
       // the absolute minimum right now... does enable the `basic` usage model
       if(landing === null || landing === undefined){
         landing = default_svg;
@@ -32,7 +32,7 @@
           api.timed_execution(delay);
         });
       }else if(_.isObject(landing)){
-        console.log("not implemented");
+        console.error("not implemented");
       }
     };
     

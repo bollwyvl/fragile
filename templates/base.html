@@ -122,11 +122,6 @@
       </a>
     </div>
   </div>
-
-
-  <footer>
-    <p>&copy; <span class="from_config title"></span> 2012</p>
-  </footer>
 </div>
 {%- endblock %}
 
@@ -139,5 +134,10 @@
     {% else %}
         <script type="text/javascript" src="./js/fragile-min.js"></script>
     {% endif %}
-
+    <script type="text/javascript">
+      ;(function(){
+        // fire it up
+        fragile("./{% if env == "dev" %}static/{% endif %}").init();
+      }).call(this);
+    </script>
 {%- endblock %}
