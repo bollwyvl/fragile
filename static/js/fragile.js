@@ -28,7 +28,9 @@
         // list of repo trees
         repos: {},
         // column view configurations
-        columns: {issues: [], pulls: []}
+        columns: {issues: [], pulls: []},
+        // move this later
+        layer_order: []
       },
       // the publicly exposed api: see the bottom of the file. all members
       // should return this for chainiliciousness
@@ -54,6 +56,8 @@
     };
     
     api.play_landing = function(){
+      // TODO: it would be great if one could drop an inkscape file in...
+      // fragile.svg?
       var win = $(window),
         layer1 = d3.select("#landing #layer1"),
         svg = d3.select("#landing svg"),
@@ -63,7 +67,8 @@
         ) * 0.8,
         layers = api.inkscape_layers(),
         wpx = (rx * svg.attr("width") + 5)+"px",
-        hpx = (rx * svg.attr("height") + 5)+"px";
+        hpx = (rx * svg.attr("height") + 5)+"px",
+        layer_order = api.layer_order();
         
       svg.attr("width", wpx)
         .attr("height", hpx);
@@ -73,18 +78,6 @@
       
       layers.style("opacity", 0);
       
-      // move this later
-      var layer_order = [
-        "main",
-        "data",
-        "your browser",
-        "browsers",
-        "main",
-        "your data",
-        "your community",
-        "community"
-      ];
-      
       d3.select("#landing")
         .style("width", wpx)
         .style("opacity", 0)
@@ -93,8 +86,8 @@
         .style("opacity", 100)
       .transition()
         .each(function(datum, idx){
+          // TODO: it's gotta work better
           if(idx){return;}
-          
           layers.transition()
             .delay(function(d, i){
               var ink_label = this.attributes["inkscape:label"].value,
@@ -102,7 +95,6 @@
               return build_order * 1000;
             })
             .style("opacity", 100);
-          
         });
         
       layers.style("opacity", 0);
@@ -127,19 +119,34 @@
         .filter(function(){return this;});
         return layers;
     };
+    
+    api.layer_order = function(){
+      var layer_names = [];
+      
+      api.inkscape_layers().each(function(){
+        layer_names.push(this.attributes["inkscape:label"].value);
+      });
+      layer_names.sort();
+      return layer_names;
+    };
 
     api.load_config = function(){
       // do the best guess of the config
-      var loc = window.location;
+      var loc = window.location,
+        static_loc = "./fragile.json";
+      
       if(loc.hostname.indexOf("github.com") !== -1){
         var owner = loc.hostname.replace(".github.com", ""),
           repo = loc.pathname.split("/")[1];
         my.cfg.repos = [owner + "/" + repo];
+      }else if(loc.search.length){
+        // allow single hosted instance?
+        static_loc = loc.search.slice(2)+".json";
       }
       
       // extend config with fragile.json
       var json = $.ajax({
-        url: "./fragile.json",
+        url: static_loc,
         dataType: "json",
         async: false,
         error: function(){
@@ -195,6 +202,17 @@
         password: passwd,
         auth: "basic"
       });
+      
+      d3.select("#landing")
+        .transition()
+          .style("opacity", 0)
+          .style("display", "none");
+      
+      d3.select("#app")
+          .style("opacity", 0)
+          .style("display", "block")
+      .transition()
+        .style("opacity", 100);
 
       // right now, just does issues... but should do more
       api.user(username, api.gh_api_available);

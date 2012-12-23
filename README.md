@@ -118,6 +118,48 @@ manually, you'll get what you ask for.
   "collaborators": ["user1", "user2"]
 }
 ````
+
+### TODO: `landing`
+_Default: the distributed what is fragile intro_
+
+A path to an SVG file (probably needs to be relative), such as can be made with 
+the excellent [Inkscape](http://inkscape.org). It has a few configurations 
+styles:
+
+#### basic
+```json
+{
+  "landing": "landing.svg"
+}
+```
+
+#### build
+```json
+{
+  "landing":[
+    "landing.svg",
+    "thankyou.svg"
+  ],
+}
+```
+Will load `landing.svg`, then wait for the user to click before hiding 
+`landing.svg` and showing `thankyou.svg`. You can split PDFs, such as could be 
+printed from [LibreOffice](http://libreoffice.org) then converted into SVG with 
+Inkscape or  [pdf2svg](http://www.cityinthesky.co.uk/opensource/pdf2svg).
+
+#### id list
+Fade in IDs for Inkscape-style layered building: automated or delay.
+_Currently partially implemented and will be refatored out and refined_
+
+
+## Multiple Customizations
+The easiest way to have multiple customized setups is by using the `?` in the 
+address bar. For example:
+http://bollwyvl.github.com/fragile/?ipython
+will pick load `ipython.json`.
+
+The browser will remember your previous setups.
+
 # What is this repo?
 Even though Fragile is just HTML and JavaScript, I still haven't found the love 
 that is node.js development: this is my cut-down development stack based on 
