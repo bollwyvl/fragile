@@ -147,11 +147,11 @@ Will load `landing.svg`, then wait for the user to click before hiding
 printed from [LibreOffice](http://libreoffice.org) then converted into SVG with 
 Inkscape or  [pdf2svg](http://www.cityinthesky.co.uk/opensource/pdf2svg).
 
-#### Inkscape Layers Build
-If a referenced SVG uses the inkscape namespace `sodipodi`, and you specify an 
-empty list, the highest-level svg layers will be built at a nice 4 second build.
+#### Single Inkscape SVG Build
+If a landing SVG uses the inkscape namespace `sodipodi`, and you specify an 
+empty list, the Inkscape layers will be built at a nice 3 second delay.
 
-if you specify a number of seconds, it will wait that long instead.
+if you specify a number of seconds, it will wait that long instead of 3 seconds.
 ```json
 {
   "landing.svg":[2.5],

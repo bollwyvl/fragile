@@ -21,18 +21,35 @@
       if(_.isString(landing)){
           api.replace_landing(landing, api.play_landing);
       }else if(_.isArray(landing)){
-        if(!landing.length){
-          console.log("not implemented");
-          return;
-          //TODO: timer
-          //TODO: build create click/key handler
-          api.replace_landing(default_svg, function(){
-            api.play_landing();
-          });
+        var delay = 3.0;
+        
+        if(landing.length === 1 && _.isNumber(landing[0])){
+          delay = landing[0];
         }
+        
+        api.replace_landing(default_svg, function(){
+          api.play_landing();
+          api.timed_execution(delay);
+        });
       }else if(_.isObject(landing)){
         console.log("not implemented");
       }
+    };
+    
+    api.timed_execution = function(delay){
+      var layers = d3.selectAll("#landing svg > g")
+          .style("opacity", 0.0),
+        current = layers[0].length;
+        
+      function reveal(){
+        d3.select(layers[0][current--])
+          .transition().style("opacity", 1.0);
+        if(current + 1){window.setTimeout(reveal, delay * 1e3);}
+      }
+      
+      reveal();
+      
+      return api;
     };
     
     api.replace_landing = function(landing_svg, callback){
@@ -56,7 +73,7 @@
       // this is the basic case... TODO: refactor
       var win = $(window),
         svg = d3.select("#landing svg"),
-        layers = svg.select("#landing svg > g"),
+        layers = d3.selectAll("#landing svg > g"),
         rx = Math.min(
           $(window).height() / svg.attr("height"),
           $(window).width() / svg.attr("width")
