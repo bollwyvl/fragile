@@ -10,31 +10,49 @@
       api = {};
 
   
-    api.load_landing = function(callback){
+    api.show = function(callback){
       var landing = cfg();
-      
+      var default_svg = "static/svg/landing.svg";
       // the absolute minimum right now... does enable the `basic` usage model
       if(landing === null || landing === undefined){
-        landing = "static/svg/landing.svg";
+        landing = default_svg;
       }
       
       if(_.isString(landing)){
-          d3.xml(landing, "image/svg+xml", function(xml) {
-              var importedNode = window.document.importNode(
-                xml.documentElement, true);
-              d3.select("#landing").node().appendChild(importedNode);
-              callback();
+          api.replace_landing(landing, api.play_landing);
+      }else if(_.isArray(landing)){
+        if(!landing.length){
+          console.log("not implemented");
+          return;
+          //TODO: timer
+          //TODO: build create click/key handler
+          api.replace_landing(default_svg, function(){
+            api.play_landing();
           });
+        }
       }else if(_.isObject(landing)){
         console.log("not implemented");
-        return;
-      }else if(_.isArray(landing)){
-        console.log("not implemented");
-        return;
       }
     };
     
-    api.play_landing = function(){
+    api.replace_landing = function(landing_svg, callback){
+      var landing = d3.select("#landing");
+      
+      landing.transition()
+        .style("opacity", 0);
+        
+      landing.select("svg").remove();
+      
+      d3.xml(landing_svg, "image/svg+xml", function(xml) {
+          var importedNode = window.document.importNode(
+            xml.documentElement, true);
+          d3.select("#landing").node().appendChild(importedNode);
+
+          if(callback){callback();}
+      });
+    };
+    
+    api.play_landing = function(callback){
       // this is the basic case... TODO: refactor
       var win = $(window),
         svg = d3.select("#landing svg"),
@@ -61,6 +79,8 @@
         .style("visibility", "visible")
       .transition()
         .style("opacity", 1.0);
+
+      if(callback){callback();}
     };
     /*
     TODO: bring this back 
@@ -118,12 +138,6 @@
       });
       layer_names.sort();
       return layer_names;
-    };
-    
-    api.show = function(callback){
-      // TODO: do something with this callback
-      api.load_landing(api.play_landing);
-      return api; 
     };
   
     return api;

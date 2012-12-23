@@ -147,10 +147,16 @@ Will load `landing.svg`, then wait for the user to click before hiding
 printed from [LibreOffice](http://libreoffice.org) then converted into SVG with 
 Inkscape or  [pdf2svg](http://www.cityinthesky.co.uk/opensource/pdf2svg).
 
-#### TODO: id list
-Fade in IDs for Inkscape-style layered building: automated or delay.
-_Currently partially implemented and will be refatored out and refined_
+#### Inkscape Layers Build
+If a referenced SVG uses the inkscape namespace `sodipodi`, and you specify an 
+empty list, the highest-level svg layers will be built at a nice 4 second build.
 
+if you specify a number of seconds, it will wait that long instead.
+```json
+{
+  "landing.svg":[2.5],
+}
+```
 
 ## Multiple Customizations
 The easiest way to have multiple customized setups is by using the `?` in the 
