@@ -134,8 +134,6 @@
     description: "When the issue was last updated"
   }).value();
   
-  var pulls = {};
-  
-  fragile.handlers({issues: issues, pulls: pulls});
+  fragile.handlers({issues: issues});
   
 }).call(this, fragile, d3, moment, _);

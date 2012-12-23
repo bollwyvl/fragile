@@ -606,8 +606,13 @@
 
 fragile.handlers = function(handlers){
   if(!arguments.length){return _.clone(lib.handlers);}
+  _.map(handlers, function(type_hndlrs, hndlr_type){
+    if(!_.isObject(lib.handlers[hndlr_type])){
+      lib.handlers[hndlr_type] = {};
+    }
+    _.extend(lib.handlers[hndlr_type], type_hndlrs);
+  });
   
-  _.extend(lib.handlers, handlers);
 };
     
 fragile.lander = function(lander){

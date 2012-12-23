@@ -13,7 +13,7 @@ from flask.ext.bootstrap import Bootstrap
 
 def make_app(env="dev"):
     
-    DEBUG = True #= env == "dev"
+    DEBUG = env == "dev"
     
     url_root = {
         "dev": "/",
