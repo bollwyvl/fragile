@@ -15,11 +15,11 @@
       
       // the absolute minimum right now... does enable the `basic` usage model
       if(landing === null || landing === undefined){
-        landing = "static/svg/landing";
+        landing = "static/svg/landing.svg";
       }
       
       if(_.isString(landing)){
-          d3.xml(landing + ".svg", "image/svg+xml", function(xml) {
+          d3.xml(landing, "image/svg+xml", function(xml) {
               var importedNode = window.document.importNode(
                 xml.documentElement, true);
               d3.select("#landing").node().appendChild(importedNode);
