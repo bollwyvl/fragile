@@ -166,6 +166,10 @@ that is node.js development: this is my cut-down development stack based on
 Flask that lets me use Jinja templates and python for sysadmin tasks as a build 
 system for an optimized web app.
 
+This repo will maintain the development process: code, build, test, 
+documentation and design. A separate effort, providing feature input to this 
+one, is described in the [Roadmap][#roadmap].
+
 ## Contributing
 Let's make this awesomer!
 
@@ -183,6 +187,29 @@ make Fragile cooler.
 
 It would be great if you pushed your Fragile to the `gh-pages` of a project you 
 care about as a test case.
+
+# Roadmap
+This project sprang from general involvment in open source projects, but
+also to support ongoing research into free/libre open source communities. One
+short-term goal in forming the bulk of the experimentation data for a 
+paper/competition entry/workshop at one or more conferences.
+
+The current goal is to structure a monthly release cycle around the lifecycle 
+of the conference schedules: while the user is king, certain features may be 
+prioritized to support experiments and visualization techniques. The research 
+for the documents will be managed in a 
+[separate repo](http://github.com/bollwyvl/fragile-paper) on GitHub.
+
+### 1.1
+#### Proof of concept
+- Meet needs of [Motivation][#motivation], gain feature input
+### *See Future Features*
+### 10.14
+#### Start of Conferences
+
+## Future Features
+See issues/pull requests. Maybe on the [demo](http://bollwyvl.github.com/fragile)?
+
 
 # Motivation
 Successful free software projects grow, sometimes primarily because they are on 
