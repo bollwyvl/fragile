@@ -17,5 +17,5 @@ static/lib/moment/min/moment.min.js
 
 # fragile
 static/js/fragile.js
-static/js/handlers.js
+static/js/issues.js
 static/js/lander.js
