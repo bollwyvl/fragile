@@ -22,8 +22,8 @@
           title: "",
           repos: [],
           collaborators: [],
-          handlers: {},
-          landing: {}
+          handlers: null,
+          landing: null
         },
         // the gh object
         gh: null,
