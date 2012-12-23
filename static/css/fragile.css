@@ -1,5 +1,16 @@
 body {
-  padding-top: 60px;
+  padding-bottom: 40px;
+}
+
+#app{
+  display: none;
+}
+
+#landing{
+  visibility: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
 }
 
 .loggedin.yep{
@@ -15,3 +26,4 @@ body {
 #repos rect:hover{
   fill: #999;
 }
+

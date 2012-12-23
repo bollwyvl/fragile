@@ -1,7 +1,8 @@
 ;(function(GH, $, _, d3){
   "use strict";
   // not planning on actually making this work on the server, but _ does it
-  var window = this;
+  var window = this,
+    phi = (1 + Math.sqrt(5) ) / 2;
   
   // for jslint and firefox
   var console = window.console || {log: function(){}};
@@ -46,8 +47,27 @@
       // do more stuff based on config, i suppose... might not be much loaded
       $(".title.from_config").text(my.cfg.title);
       $("title").text(my.cfg.title);
-
+      
+      api.play_landing();
+      
       return api;
+    };
+    
+    api.play_landing = function(){
+      var win = $(window),
+        layer1 = d3.select("#landing #layer1"),
+        rx = $(window).height() / $(window).width();
+      
+      
+      
+      layer1.attr("transform", "scale("+ rx +") " + layer1.attr("transform"));
+      
+      d3.select("#landing")
+        .style("width", (win.width() - 20) + "px")
+        .style("opacity", 0)
+        .style("visibility", "visible")
+      .transition()
+        .style("opacity", 100);
     };
 
     api.load_config = function(){
@@ -66,7 +86,10 @@
         async: false,
         error: function(){
           console.log("Hi, there! It's no big deal if you don't have a " +
-           "fragile.json! it's just for fancy configuration stuff.");
+           "fragile.json! It's just for fancy configuration stuff that can't " +
+           "be figured out from where you host it (like localhost!). Here's " +
+           "your config right now",
+           my.cfg);
         }
       });
       
@@ -92,6 +115,9 @@
 
       $("#pulls .refresh").on("click", api.pull_requests);
       $("#pulls .columns").on("click", api.update_columns("pulls"));
+      
+
+      $("#repos .refresh").on("click", api.update_repos_data);
       
       $("#columns .btn-primary").on("click", api.update_issues_ui);
       return api;
