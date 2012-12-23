@@ -12,5 +12,6 @@
     "jstenar",
     "minrk",
     "rkern"
-    ]
+    ],
+  "landing": "static/svg/ipython"
 }

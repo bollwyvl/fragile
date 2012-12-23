@@ -5,27 +5,30 @@
     console = window.console || {log: function(){}};
   
   // should be mostly self-documenting
-  var lander = function(cfg){
-    var api = {};
+  var lander = function(config_callback){
+    var cfg = config_callback,
+      api = {};
 
   
     api.load_landing = function(callback){
+      var landing = cfg();
+      
       // the absolute minimum right now... does enable the `basic` usage model
-      if(cfg.landing === null || cfg.landing === undefined){
-        cfg.landing = "static/svg/landing.svg";
+      if(landing === null || landing === undefined){
+        landing = "static/svg/landing";
       }
       
-      if(_.isString(cfg.landing)){
-          d3.xml(cfg.landing, "image/svg+xml", function(xml) {
+      if(_.isString(landing)){
+          d3.xml(landing + ".svg", "image/svg+xml", function(xml) {
               var importedNode = window.document.importNode(
                 xml.documentElement, true);
               d3.select("#landing").node().appendChild(importedNode);
               callback();
           });
-      }else if(_.isObject(cfg.landing)){
+      }else if(_.isObject(landing)){
         console.log("not implemented");
         return;
-      }else if(_.isArray(cfg.landing)){
+      }else if(_.isArray(landing)){
         console.log("not implemented");
         return;
       }
@@ -34,13 +37,12 @@
     api.play_landing = function(){
       // this is the basic case... TODO: refactor
       var win = $(window),
-        layer1 = d3.select("#landing #layer1"),
         svg = d3.select("#landing svg"),
+        layers = svg.select("#landing svg > g"),
         rx = Math.min(
           $(window).height() / svg.attr("height"),
           $(window).width() / svg.attr("width")
         ) * 0.8,
-        layers = api.inkscape_layers(),
         wpx = (rx * svg.attr("width") + 5)+"px",
         hpx = (rx * svg.attr("height") + 5)+"px",
         layer_order = api.layer_order();
@@ -49,31 +51,51 @@
         .attr("height", hpx);
       
         // clean up layer 1
-      layer1.attr("transform", "scale("+ rx +") " + layer1.attr("transform"));
-      
-      layers.style("opacity", 0);
+      layers.attr("transform", function(){
+        return "scale("+ rx +") " + d3.select(this).attr("transform");
+      });
       
       d3.select("#landing")
         .style("width", wpx)
-        .style("opacity", 0)
+        .style("opacity", 0.0)
         .style("visibility", "visible")
       .transition()
-        .style("opacity", 100)
-      .transition()
-        .each(function(datum, idx){
-          // TODO: it's gotta work better
-          if(idx){return;}
-          layers.transition()
-            .delay(function(d, i){
-              var ink_label = this.attributes["inkscape:label"].value,
-                build_order = layer_order.indexOf(ink_label);
-              return build_order * 1000;
-            })
-            .style("opacity", 100);
-        });
-        
-      layers.style("opacity", 0);
+        .style("opacity", 1.0);
     };
+    /*
+    TODO: bring this back 
+    .transition()
+      .each(function(datum, idx){
+        // TODO: it's gotta work better
+        if(idx){return;}
+        layers.transition()
+          .delay(function(d, i){
+            var ink_label = this.attributes["inkscape:label"].value,
+              build_order = layer_order.indexOf(ink_label);
+            return build_order * 1000;
+          })
+          .style("opacity", 100);
+      });
+        
+    layers.style("opacity", 0);
+    
+    .transition()
+      .style("opacity", 100)
+    .transition()
+      .each(function(datum, idx){
+        // TODO: it's gotta work better
+        if(idx){return;}
+        layers.transition()
+          .delay(function(d, i){
+            var ink_label = this.attributes["inkscape:label"].value,
+              build_order = layer_order.indexOf(ink_label);
+            return build_order * 1000;
+          })
+          .style("opacity", 100);
+      });
+        
+    layers.style("opacity", 0);
+    */
     
     api.inkscape_layers = function(){
       // do better!

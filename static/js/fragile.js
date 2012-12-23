@@ -23,7 +23,7 @@
           repos: [],
           collaborators: [],
           handlers: {},
-          lander: {}
+          landing: {}
         },
         // the gh object
         gh: null,
@@ -46,7 +46,7 @@
 
       // handlers, right now for grid... TODO: refactor like lander
       my.handlers = lib.handlers;
-      my.lander = lib.lander(my.cfg.lander);
+      my.lander = lib.lander(function(attr){return my.cfg.landing;});
 
     api.init = function(){
       // page just loaded, do some stuff... no data yet
