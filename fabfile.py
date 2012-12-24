@@ -13,6 +13,7 @@ import sh
 import pkgutil
 
 PROJECT_ROOT = str(sh.git("rev-parse", **{"show-toplevel": True})).strip()
+PROJECT_SHA = str(sh.git("rev-parse", "HEAD")).strip()
 
 CFG_TEMPLATE = """# do not modify this file. generated automatically
 [minify_%(src)s]
@@ -50,7 +51,9 @@ def build():
     copy_assets()
     html()
     minify()
+    dirty()
     sh.cd("dist")
+    sh.git("add", ".")
     print sh.git("status")
 
 
@@ -68,6 +71,14 @@ def clean():
         sh.rm("-r", sh.glob("dist/*"), sh.glob("build/*"))
     except:
         print ".. already clean"
+
+
+@task
+def dirty():
+  dirty_file = open("dirty", "w")
+  dirty_file.write("".join([d for d in sh.git("status", "--porcelain")
+    if d.strip().split(" ")[-1] not in [u"dist"]]))
+  dirty_file.close()
 
 @task
 def favicon():
