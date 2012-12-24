@@ -92,6 +92,7 @@ def favicon():
             "static/favicon.ico"
         ]
     )
+    sh.cp("static/favicon.ico","dist/favicon.ico")
     print(".. cleaning up")
     sh.rm(sh.glob("/tmp/favicon-*.png"))
 

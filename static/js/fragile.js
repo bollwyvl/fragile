@@ -33,7 +33,7 @@
         // list of issue results from api
         issues: [],
         // list of pull requests from api
-        pull_requests: [],
+        pulls: [],
         // list of repo trees
         repos: {},
         // column view configurations
@@ -118,13 +118,15 @@
       $("#issues .refresh").on("click", api.update_issues_data);
       $("#issues .columns").on("click", api.update_columns("issues"));
 
-      $("#pulls .refresh").on("click", api.pull_requests);
+      $("#pulls .refresh").on("click", api.update_pulls_data);
       $("#pulls .columns").on("click", api.update_columns("pulls"));
       
 
       $("#repos .refresh").on("click", api.update_repos_data);
       
-      $("#columns .btn-primary").on("click", api.update_issues_ui);
+      $("#columns .btn-primary").on("click", function(){
+        api.update_issues_ui().update_pulls_ui();
+      });
       return api;
     };
     
@@ -164,8 +166,9 @@
       // hooray, we have data. let's get busy
       
       var data_calls = function(){
-        api.update_issues_data();
         api.update_repos_data();
+        api.update_issues_data();
+        api.update_pulls_data();
       };
       
       if(!my.cfg.collaborators.length){
@@ -214,15 +217,16 @@
       return api;
     };
     
-    api.default_columns = function(parent){
+    api.default_columns = function(thing_type){
       // get some default columns... a getter/setter on my.columns.x might be 
       // better
-      var col_names;
-      if(parent === "issues"){
-        col_names = ["issue_number", "title"];
-      }
+      var col_names = {
+        issues: ["issue_number", "title"],
+        pulls: ["pull_number", "title"]
+      }[thing_type];
+      
       return col_names.map(function(col_name){
-        return api.make_column_config(col_name, parent);
+        return api.make_column_config(col_name, thing_type);
       });
     };
     
@@ -242,62 +246,68 @@
         }).join(" ");
     };
     
-    api.update_issues_ui = function(){
-      // update the issue table... will be refactored when adding PRs
+    api.update_grid = function(thing_type){
+      return function(evt, callback){
+        // update the issue table... will be refactored when adding PRs
       
-      // get ye config
-      var col_cfgs = my.columns.issues,
-        default_cols = api.default_columns("issues");
+        // get ye config
+        var col_cfgs = my.columns[thing_type],
+          default_cols = api.default_columns(thing_type),
+          thing_grid = d3.select("#" + thing_type);
       
-      col_cfgs = col_cfgs.length ? col_cfgs : default_cols;
+        col_cfgs = col_cfgs.length ? col_cfgs : default_cols;
       
-      // table header
-      var head = d3.select("#issues thead tr")
-        .selectAll("th").data(col_cfgs);
+        // table header
+        var head = thing_grid.select("thead tr")
+          .selectAll("th").data(col_cfgs);
         
-      head.enter().append("th");
-      head.exit().remove();
+        head.enter().append("th");
+        head.exit().remove();
       
-      head.text(function(datum){
-        return datum.col.label || api.titlefy(datum.col_name);
-      });
-      
-      // update a row per ticket
-      var row = d3.select("#issues tbody")
-        .selectAll("tr").data(my.issues);
-        
-      row.enter().append("tr");
-      row.exit().remove();
-      
-      // make a td per column configuration
-      var col = row.selectAll("td")
-        .data(function(datum){
-          return col_cfgs.map(function(col_cfg, idx){
-            return {
-              cfg: col_cfg,
-              val: datum[col_cfg.col.gh_field], // really needed? sensible def
-              ctx: datum
-            };
-          });
-        }, function(row_col, idx){
-          return row_col.cfg.col_name + "_" +idx;
+        head.text(function(datum){
+          return datum.col.label || api.titlefy(datum.col_name);
         });
       
-      col.exit().remove();
-      
-      // css classes... not using these yet... might?
-      col.enter().append("td")
-        .attr("class", function(datum){return datum.cfg.col_name;});
-      
-      // call custom handlers, or just put in text from the ui
-      col.each(function(cell){
-        if(!cell.cfg.col.handler){return d3.select(this).text(cell.val);}
+        // update a row per ticket/pull
+        var row = thing_grid.select("tbody")
+          .selectAll("tr").data(my[thing_type]);
         
-        cell.cfg.col.handler.call(this, cell.val, cell.ctx, my.cfg);
-      });
+        row.enter().append("tr");
+        row.exit().remove();
+      
+        // make a td per column configuration
+        var col = row.selectAll("td")
+          .data(function(datum){
+            return col_cfgs.map(function(col_cfg, idx){
+              return {
+                cfg: col_cfg,
+                val: datum[col_cfg.col.gh_field], // really needed? sensible def
+                ctx: datum
+              };
+            });
+          }, function(row_col, idx){
+            return row_col.cfg.col_name + "_" +idx;
+          });
+      
+        col.exit().remove();
+      
+        // css classes... not using these yet... might?
+        col.enter().append("td")
+          .attr("class", function(datum){return datum.cfg.col_name;});
+      
+        // call custom handlers, or just put in text from the ui
+        col.each(function(cell){
+          if(!cell.cfg.col.handler){return d3.select(this).text(cell.val);}
+        
+          cell.cfg.col.handler.call(this, cell.val, cell.ctx, my.cfg);
+        });
 
-      return api;
+        return api;
+      };
     };
+    
+    api.update_issues_ui = api.update_grid("issues");
+    api.update_pulls_ui = api.update_grid("pulls");
     
 
     /*
@@ -511,6 +521,7 @@
     DATA STUFF
     */
     
+    
     api.repo_countdown_to = function(callsback){
       // counter for the different callbacks to update
       var repos_left = my.cfg.repos.length;
@@ -527,40 +538,46 @@
       return repo_done;
     };
     
-    api.update_issues_data = function(evt, callback){
-      // asynchronously load the issue data... won't traverse any urls (e.g. 
-      // comments)
+    var _update_data_list = function(thing_type, base_callback){
+      return function(evt, callback){
+        var repo_done = api.repo_countdown_to([base_callback, callback]);
       
-      // counter for the different callbacks to update
-      var repo_done = api.repo_countdown_to([api.update_issues_ui, callback]);
-      
-      my.cfg.repos.map(function(owner_repo){
-        my.gh.getIssues.apply(null, owner_repo.split("/"))
-          .list(function(err, issues){
+        my.cfg.repos.map(function(owner_repo){
+          var repo = my.gh.getRepo.apply(null, owner_repo.split("/"));
+        
+          var my_things = my[thing_type];
+        
+          repo[thing_type](function(err, things) {
             if(err){
               console.error(err);
             }else{
-              var urls = _.pluck(my.issues, "url");
+              var urls = _.pluck(my[thing_type], "url");
             
-              issues.map(function(issue){
-                var issue_idx = urls.indexOf(issue.url);
+              things.map(function(thing){
+                var thing_idx = urls.indexOf(thing.url);
               
-                if(issue_idx === -1){
-                  my.issues.push(issue);
+                if(thing_idx === -1){
+                  my_things.push(thing);
                 }else{
-                  my.issues[issue_idx] = issue;
+                  my_things[thing_idx] = thing;
                 }
               });
             }
             repo_done();
           });
-      });
+        });
       
-      return api;
+        return api;
+      };
     };
     
+    api.update_issues_data = _update_data_list("issues", api.update_issues_ui);
+    
+    api.update_pulls_data = _update_data_list("pulls", api.update_pulls_ui);
+    
+    
     api.update_collaborators_data = function(evt, callback){
-      
+      // TODO: refactor this...
       var repo_done = api.repo_countdown_to([callback]);
       
       my.cfg.repos.map(function(owner_repo){

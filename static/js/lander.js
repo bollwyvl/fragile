@@ -12,11 +12,13 @@
   
     api.show = function(callback){
       var landing = cfg();
-      var default_svg = static_path + "svg/landing.svg";
+      var default_svg = "svg/landing.svg";
       // the absolute minimum right now... does enable the `basic` usage model
       if(landing === null || landing === undefined){
         landing = default_svg;
       }
+      
+      landing = static_path + landing;
       
       if(_.isString(landing)){
           api.replace_landing(landing, api.play_landing);

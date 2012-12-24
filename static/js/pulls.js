@@ -6,9 +6,9 @@
   
   pulls.title = {
       gh_field: "title",
-      description: "The title of the ticket"
+      description: "The title of the pull request"
   };
-    
+  /*
   pulls.comment_stream = {
     gh_field: "_comments",
     description: "A visual depiction of the comment stream",
@@ -98,11 +98,12 @@
       });
     }
   };
+  */
   
-  pulls.issue_number = {
+  pulls.pull_number = {
     gh_field: "number",
     label: "#",
-    description: "The project-specific issue number (the one GFM finds with #)",
+    description: "The project-specific pull request number (the one GFM finds)",
     handler: function(value, context){
       var a = d3.select(this).selectAll("a")
         .data([1]);
