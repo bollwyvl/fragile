@@ -1,5 +1,0 @@
-# fragile
-static/lib/awesome/css/font-awesome.css
-
-# fragile
-static/css/fragile.css

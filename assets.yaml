@@ -1,0 +1,41 @@
+css-prod:
+  filters: cssutils,cssmin
+  output: fragile-prod-min.css
+  contents:
+    - css
+    
+css-build:
+  filters: cssutils,cssmin
+  output: fragile-min.css
+  contents:
+    - css
+
+css-dev:
+  contents:
+    - css
+
+css:
+  contents:
+    - bootstrap/css/bootstrap.no-icons.min.css
+    - lib/awesome/css/font-awesome.css
+    - bootstrap/css/bootstrap-responsive.css
+    - css/fragile.css
+    
+js:
+  filters: jspacker
+  output: fragile-min.js
+  contents:
+    - lib/d3/d3.min.js
+    - lib/github/lib/underscore-min.js
+    - lib/github/lib/base64.js
+    - lib/github/github.js
+    - lib/moment/min/moment.min.js
+    - bootstrap/js/bootstrap.min.js
+    - app
+    
+app:
+  contents:
+    - js/fragile.js
+    - js/issues.js
+    - js/pulls.js
+    - js/lander.js

@@ -1,4 +1,5 @@
 *~
 setup.cfg
 build
-dirty
+.dirty
+.webassets-cache

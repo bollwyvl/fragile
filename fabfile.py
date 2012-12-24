@@ -5,25 +5,13 @@ fabric tasks for repetitive fragile tasks
 
 import os
 import sys
-from pprint import pprint
 
 from fabric.api import task
 
 import sh
-import pkgutil
 
 PROJECT_ROOT = str(sh.git("rev-parse", **{"show-toplevel": True})).strip()
 PROJECT_SHA = str(sh.git("rev-parse", "HEAD")).strip()
-
-CFG_TEMPLATE = """# do not modify this file. generated automatically
-[minify_%(src)s]
-sources = %(assets)s
-output = dist/%(src)s/fragile-min.%(src)s
-
-"""
-
-FLASK_BS = os.path.join(
-    pkgutil.get_loader("flask_bootstrap").filename, "static")
 
 @task
 def proj():
@@ -39,7 +27,7 @@ def flake():
 
 @task
 def pep8():
-    sh.pep8("fabfile.py", "app.py")
+    sh.pep8("fabfile.py", "fragile.py")
 
 
 @task
@@ -48,9 +36,9 @@ def build():
     flake()
     clean()
     favicon()
-    copy_assets()
     html()
-    minify()
+    copy_assets()
+    patch_css()
     dirty()
     sh.cd("dist")
     sh.git("add", ".")
@@ -59,6 +47,7 @@ def build():
 
 @task
 def dev():
+    proj()
     sh.git("submodule", "init")
     sh.git("submodule", "update")
 
@@ -75,10 +64,11 @@ def clean():
 
 @task
 def dirty():
-  dirty_file = open("dirty", "w")
-  dirty_file.write("".join([d for d in sh.git("status", "--porcelain")
-    if d.strip().split(" ")[-1] not in [u"dist"]]))
-  dirty_file.close()
+    proj()
+    dirty_file = open(".dirty", "w")
+    dirty_file.write("".join([d for d in sh.git("status", "--porcelain")
+        if d.strip().split(" ")[-1] not in [u"dist"]]))
+    dirty_file.close()
 
 @task
 def favicon():
@@ -113,11 +103,9 @@ def copy_assets():
     
     print(". copying assets ...")
     copy_patterns = {
+        "dist": sh.glob("./static/config/*.json") + sh.glob("./static/fragile-min.*") + ["./static/lib/jquery-1.8.3.min.js"],
         "dist/font": sh.glob("./static/lib/awesome/font/*"),
-        "dist/css": [],
-        "dist/js": [],
         "dist/svg": sh.glob("./static/svg/*.svg"),
-        "dist": sh.glob("./static/config/*.json"),
         "dist/img": sh.glob("./static/img/*.*") or [],
     }
 
@@ -126,7 +114,22 @@ def copy_assets():
         for c_file in copy_files:
             print "... copying", c_file, dst
             sh.cp("-r", c_file, dst)
-            
+    
+    wa_cache = "./dist/.webassets-cache"
+    os.path.exists(wa_cache) and sh.rm("-r", wa_cache)
+@task
+def patch_css():
+  proj()
+  css_path = "./dist/fragile-min.css"
+    
+  css_file = open(css_path, "r")
+  css = css_file.read()
+  css_file.close()
+    
+  css_file = open(css_path, "w")
+  css_file.write(css.replace("../lib/awesome/font/", "./font/"))
+  css_file.close()
+    
 @task
 def html():
     proj()
@@ -136,7 +139,7 @@ def html():
     sys.path.append(fragile_path)
 
     from fragile import make_app
-    app = make_app("prod")
+    app = make_app("build")
     
     prod_files = {
         "dist/index.html": "/dist/",
@@ -146,54 +149,11 @@ def html():
         print ".. writing ", prod_file
         open(prod_file, "w").write(
             app.test_client().get(url).data
+                .replace('src="/lib/', 'src="./')
+                .replace('src="/', 'src="./')
+                .replace('href="/', 'href="./')
         )
 
-@task
-def minify():
-    proj()
-    print(". minifying ...")
-
-    sources = dict(js=[], css=[])
-    
-    # blarg
-    # bootstrap
-    sources["css"] = [os.path.join(FLASK_BS, "css", item) for item in 
-        ["bootstrap.no-icons.min.css",
-        "bootstrap-responsive.min.css"]
-    ]
-    
-    
-    for user in ["."]:
-        for min_id, asset_list in dict(js="scripts", css="styles").items(): 
-            asset_list = os.path.join(user, asset_list+".txt")
-            if os.path.exists(asset_list):
-                [
-                    sources[min_id].append(asset)
-                    for asset
-                    in [x.strip() for x in open(asset_list).read().split("\n")]
-                    if asset
-                        and not asset.startswith("#")
-                        and asset not in sources[min_id]
-                ]
-    
-
-    
-    sources["js"][1:1] = [os.path.join(FLASK_BS,"js", "bootstrap.min.js")]
-    
-    cfg = open("setup.cfg", "w")
-
-    cfg.writelines([
-        CFG_TEMPLATE % {"src": src, "assets": " ".join(assets)}
-        for src, assets in sources.items()
-    ])
-
-    print ".. writing out production setup.cfg"
-    cfg.close()
-
-    [
-        pprint(sh.python("setup.py", "minify_" + src, verbose=True))
-        for src in sources
-    ]
     
 @task
 def serve_dev():
@@ -202,6 +162,10 @@ def serve_dev():
 @task
 def serve_prod():
     serve("prod")
+
+@task
+def serve_build():
+    serve("build")
     
 @task
 def serve_test():
@@ -218,7 +182,8 @@ def serve(env):
     port = {
         "dev": 5000,
         "prod": 5001,
-        "test": 5002
+        "test": 5002,
+        "build": 5003,
     }[env]
     
     app.run(port=port)

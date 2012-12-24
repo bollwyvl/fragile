@@ -9,16 +9,22 @@ from flask import (
 from flask import (
     render_template,
     )
+
 from flask.ext.bootstrap import Bootstrap
+
+import webassets.loaders
+from flask.ext.assets import Environment
+from webassets.filter.cssrewrite import CSSRewrite
 
 def make_app(env="dev"):
     
-    DEBUG = env == "dev"
+    DEBUG = True#env == "dev"
     
     url_root = {
         "dev": "/",
-        "prod": "/dist/",
-        "test": "/dist/"
+        "build": "/dist/",
+        "test": "/dist/",
+        "prod": "/"
     }[env]
     
     app_home = os.path.dirname(__file__)
@@ -29,15 +35,20 @@ def make_app(env="dev"):
             template_folder="./templates",
             static_folder=opa(opj(app_home, "static"))
             ),
-        "prod": dict(
-            static_url_path="/dist",
+        "build": dict(
+            static_url_path="/",
             template_folder="./templates",
-            static_folder=opa(opj(app_home, "dist"))
+            static_folder=opa(opj(app_home, "static"))
             ),
         "test": dict(
             static_url_path="/dist",
             template_folder="../dist",
             static_folder=opa(opj(app_home, "..", "dist"))
+            ),
+        "prod": dict(
+            static_url_path="/static",
+            template_folder="./templates",
+            static_folder=opa(opj(app_home, "static"))
             )
     }[env]
     
@@ -45,39 +56,37 @@ def make_app(env="dev"):
     app.config['CSRF_ENABLED'] = DEBUG
     app.config['SECRET_KEY'] = "totally-insecure"
     app.config['DEBUG'] = DEBUG
+    app.config['ASSETS_DEBUG'] = False
     app.config['BOOTSTRAP_JQUERY_VERSION'] = None
 
     Bootstrap(app)
+    
+    def font_stuff(url):
+      repl = "./lib/awesome/font/"
+      if env == "build":
+          repl = "./font/"
+      return url.replace("../font/", repl)
+      
+    
+    fix_font_css = CSSRewrite(replace=font_stuff)
+    
+    assets = Environment(app)
+    bundles = webassets.loaders.YAMLLoader('assets.yaml').load_bundles()
+    for to_fix in ["prod", "build"]:
+        bundles["css-%s" % to_fix].filters.insert(0, fix_font_css)
+    [assets.register(name, bundle) for name, bundle in bundles.iteritems()]
 
     @app.route(url_root)
     def home():
         kwargs = {}
         
-        if env != "test":
-            kwargs.update(assets())
-        
         return render_template("index.html", env=env, **kwargs)
         
     return app
-    
 
-def assets(for_file="."):
-    result = dict(scripts=[], styles=[])
-    for a_type in result.keys():
-        a_list = opj(
-            os.path.dirname(__file__),
-            for_file,
-            a_type + ".txt")
-        if os.path.exists(a_list):
-            result[a_type] = [
-                asset.strip()
-                for asset
-                in open(a_list).read().split("\n")
-                if asset.strip() and not asset.strip().startswith("#")
-            ]
-    
-    return result
-
-if __name__ == "__main__":
-    app = make_app()
-    app.run()
+if __name__ == '__main__':
+    # this is the production version: fabric handles others
+    # Bind to PORT if defined, otherwise default to 5001.
+    app = make_app("prod")
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="127.0.0.1", port=port)

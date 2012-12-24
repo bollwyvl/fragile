@@ -81,7 +81,11 @@
         my.cfg.repos = [owner + "/" + repo];
       }else if(loc.search.length){
         // allow single hosted instance?
-        static_loc = static_path + loc.search.slice(2)+".json";
+        static_loc = static_path + loc.search.slice(2);
+        if(static_loc.slice(-1) === "/"){
+          static_loc = static_loc.slice(0, static_loc.length-1)
+        }
+        static_loc = static_loc + ".json";
       }
       
       // extend config with fragile.json
