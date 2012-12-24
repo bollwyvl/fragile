@@ -59,6 +59,7 @@ def make_app(env="dev"):
         return render_template("index.html", env=env, **kwargs)
         
     return app
+    
 
 def assets(for_file="."):
     result = dict(scripts=[], styles=[])

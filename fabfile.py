@@ -46,10 +46,10 @@ def build():
     proj()
     flake()
     clean()
+    favicon()
     copy_assets()
     html()
     minify()
-    favicon()
     sh.cd("dist")
     print sh.git("status")
 
@@ -89,10 +89,10 @@ def favicon():
     sh.convert(
         *[tmp_file(size) for size in sizes] + [
             "-colors", 256,
-            "static/favicon.ico"
+            "static/img/favicon.ico"
         ]
     )
-    sh.cp("static/favicon.ico","dist/favicon.ico")
+    
     print(".. cleaning up")
     sh.rm(sh.glob("/tmp/favicon-*.png"))
 
@@ -107,6 +107,7 @@ def copy_assets():
         "dist/js": [],
         "dist/svg": sh.glob("./static/svg/*.svg"),
         "dist": sh.glob("./static/config/*.json"),
+        "dist/img": sh.glob("./static/img/*.*") or [],
     }
 
     for dst, copy_files in copy_patterns.items():

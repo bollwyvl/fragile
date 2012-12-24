@@ -8,10 +8,11 @@
         {% for style in styles %}
         <link rel="stylesheet" href="./{{ style }}"/>
         {% endfor %}
+        <link rel="shortcut icon" href="./static/img/favicon.png"/>
     {% else %}
         <link rel="stylesheet" href="./css/fragile-min.css"/>
+        <link rel="shortcut icon" href="./static/img/favicon.png"/>
     {% endif %}
-    <link rel="shortcut icon" href="static/favicon.png"/>
 {%- endblock %}
 
 {%- block style_navbar_padding %}{%- endblock %}
@@ -34,7 +35,7 @@
                   Not Logged in to <i class="icon-github-sign"></i>GitHub
                 </span>
                 <span class="loggedin yep">
-                  <img class="avatar me" height="16" width="16"/>
+                  <img src="" class="avatar me" height="16" width="16"/>
                   <b class="me username">username</b>
                 </span>
                 <b class="caret"></b>

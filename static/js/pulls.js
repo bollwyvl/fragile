@@ -8,7 +8,7 @@
       gh_field: "title",
       description: "The title of the pull request"
   };
-  /*
+  
   pulls.comment_stream = {
     gh_field: "_comments",
     description: "A visual depiction of the comment stream",
@@ -98,7 +98,6 @@
       });
     }
   };
-  */
   
   pulls.pull_number = {
     gh_field: "number",

@@ -18,8 +18,6 @@
         landing = default_svg;
       }
       
-      landing = static_path + landing;
-      
       if(_.isString(landing)){
           api.replace_landing(landing, api.play_landing);
       }else if(_.isArray(landing)){
@@ -62,7 +60,7 @@
         
       landing.select("svg").remove();
       
-      d3.xml(landing_svg, "image/svg+xml", function(xml) {
+      d3.xml(static_path + landing_svg, "image/svg+xml", function(xml) {
           var importedNode = window.document.importNode(
             xml.documentElement, true);
           d3.select("#landing").node().appendChild(importedNode);
