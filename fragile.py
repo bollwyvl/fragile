@@ -5,6 +5,7 @@ from os.path import abspath as opa
 
 import mimetypes
 
+# for the webfonts
 mimetypes.add_type("application/font-woff", ".woff")
 
 from flask import (
@@ -104,6 +105,6 @@ def make_app(env="dev"):
 
 if __name__ == '__main__':
     # this is the production version: fabric handles others
-    # Bind to PORT if defined, otherwise default to 5001.
-    port = int(os.environ.get("PORT", 5001))
-    make_app("prod").run(host="0.0.0.0", port=port)
+    # Bind to PORT if defined, otherwise default to 5000.
+    PORT = int(os.environ.get("PORT", 5000))
+    make_app("prod").run(host="0.0.0.0", port=PORT)

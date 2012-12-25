@@ -215,8 +215,8 @@ def serve(env):
     app = make_app(env)
 
     port = {
-        "dev": 5000,
-        "prod": 5001,
+        "prod": 5000,
+        "dev": 5001,
         "test": 5002,
         "build": 5003,
     }[env]

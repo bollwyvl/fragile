@@ -3,3 +3,5 @@ setup.cfg
 build
 .dirty
 .webassets-cache
+.pylint.d
+

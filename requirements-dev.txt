@@ -6,5 +6,6 @@ paramiko==1.9.0
 pep8==1.4
 pycrypto==2.6
 pyflakes==0.5.0
+pylint==0.26.0
 sh==1.07
 yuicompressor==2.4.7
