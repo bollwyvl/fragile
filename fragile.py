@@ -5,8 +5,8 @@ from os.path import abspath as opa
 
 import mimetypes
 
-# for the webfonts
-mimetypes.add_type("application/font-woff", ".woff")
+# for the webfonts... might change...
+mimetypes.add_type("application/x-font-woff", ".woff")
 
 from flask import (
     Flask,
