@@ -89,4 +89,4 @@ if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5001.
     app = make_app("prod")
     port = int(os.environ.get("PORT", 5001))
-    app.run(host="127.0.0.1", port=port)
+    app.run(host="0.0.0.0", port=port)
