@@ -1,3 +1,6 @@
+"""
+Deployment-specific stub for hosting under Passenger WSGI
+"""
 import os
 import sys
 
