@@ -1,5 +1,7 @@
 """
 Deployment-specific stub for hosting under Passenger WSGI
+
+Should this live in another branch?
 """
 import os
 import sys
