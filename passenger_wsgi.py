@@ -1,7 +1,7 @@
 """
 Deployment-specific stub for hosting under Passenger WSGI
 
-Should this live in another branch? It might be better! Really!
+Should this live in another branch?
 """
 import os
 import sys
