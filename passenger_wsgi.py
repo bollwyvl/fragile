@@ -12,7 +12,8 @@ INTERP = os.path.join(os.environ["HOME"], "fragl_env", "bin", "python")
 if sys.executable != INTERP:
     os.execl(INTERP, INTERP, *sys.argv)
 
-sys.path.append(os.getcwd())
+# add to proper path
+sys.path.append(os.path.join(os.getcwd(), "app"))
 
 # primary import
 from fragile import make_app
