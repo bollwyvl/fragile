@@ -15,6 +15,11 @@ if sys.executable != INTERP:
 # add to proper path
 sys.path.append(os.path.join(os.getcwd(), "app"))
 
+try:
+    import local_config
+except ImportError:
+    pass
+
 # primary import
 from fragile import make_app
 
