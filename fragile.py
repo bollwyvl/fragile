@@ -87,7 +87,7 @@ def make_app(env="dev"):
 
     assets = Environment(app)
 
-    bundles = YAMLLoader('assets.yaml').load_bundles()
+    bundles = YAMLLoader(os.path.join(app_home, 'assets.yaml')).load_bundles()
 
     for to_fix in ["prod", "build"]:
         bundles["css-%s" % to_fix].filters.insert(0, fix_font_css)
