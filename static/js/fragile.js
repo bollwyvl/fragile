@@ -153,7 +153,7 @@
         passwd = $("#password").val();
 
       // not that this will help much...
-      $("#password").val();
+      $("#password").val("");
 
       my.gh = new GH({
         username: username,
@@ -185,21 +185,27 @@
     };
     
     api.login_oauth = function(evt){
-      if(evt.data === undefined){
+      var lstrg = window.localStorage,
+        complete_token = function(access_token){
+          my.gh = new GH({token: access_token, auth: "oauth"});
+          lstrg.gh_access_token = access_token;
+          api.login_finish();
+        };
+
+      if(lstrg.gh_access_token){
+        complete_token(lstrg.gh_access_token);
+      }else if(evt.data === undefined){
         var gh_login = "https://github.com/login/oauth/authorize",
           par = {
             redirect_uri: window.location.origin + "/login",
             client_id: fragile.GH.CLIENT_ID,
             state: Math.random()
           };
-      
         window.open(gh_login + "?" + $.param(par), "_oauth");
       }else{
-        $.get("/oauth", {code: evt.data.code, state: evt.data.state},
-          function(access_token){
-            my.gh = new GH({token: access_token, auth: "oauth"});
-            api.login_finish();
-          }
+        $.get("/oauth",
+          {code: evt.data.code, state: evt.data.state},
+          complete_token
         );
       }
       return api;
