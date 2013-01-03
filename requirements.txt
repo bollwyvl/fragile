@@ -5,4 +5,5 @@ Jinja2==2.6
 PyYAML==3.10
 cssmin==0.1.4
 cssutils==0.9.10b1
+requests==1.0.4
 Werkzeug==0.8.3

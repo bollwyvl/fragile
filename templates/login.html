@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Logging in to GitHub...</title>
+  </head>
+  <body>
+    Your OAuth login has already started over in the other window. This window 
+    will close shortly!
+    <script>
+      ;(function(){
+        if(!this.opener){return;}
+        var msg_data = this.location.search.slice(1).split("&")
+          .reduce(function(memo, bit){
+            var bits = bit.split("=");
+            memo[bits[0]] = bits[1];
+            return memo;
+          }, {});
+        this.opener.postMessage(msg_data, this.location);
+        this.setInterval(this.close, 5000);
+      }).call(this);
+    </script>
+  </body>
+</html>

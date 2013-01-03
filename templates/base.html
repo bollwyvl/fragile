@@ -34,9 +34,14 @@
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
+                <li class="loggedin nope">
+                  <a href="#" id="oauth-login">
+                    OAuth Sign In (More Secure)
+                  </a>
+                </li>
                 <li class="loggedin nope action">
-                  <a href="#" data-toggle="modal" data-target="#login">
-                    Sign In
+                  <a href="#" data-toggle="modal" data-target="#login" data-method="basic">
+                    Basic Sign In (Less Secure)
                   </a>
                 </li>
                 <li class="loggedin yep action">
@@ -129,6 +134,7 @@
     
     <script type="text/javascript">
       ;(function(){
+        fragile.GH = {CLIENT_ID: "{{ gh_client_id }}"};
         // fire it up
         fragile("./{% if env in ["dev","prod"] %}static/{% endif %}").init();
       }).call(this);

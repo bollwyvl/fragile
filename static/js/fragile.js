@@ -51,6 +51,7 @@
         function(attr){return my.cfg.landing;},
          static_path);
 
+
     api.init = function(){
       // page just loaded, do some stuff... no data yet
       api.load_config()
@@ -59,6 +60,7 @@
       
       return api;
     };
+
     
     api.init_ui = function(){
       // do more stuff based on config, i suppose... might not be much loaded
@@ -69,6 +71,7 @@
       
       return api;
     };
+
 
     api.load_config = function(){
       // do the best guess of the config
@@ -83,7 +86,7 @@
         // allow single hosted instance?
         static_loc = static_path + loc.search.slice(2);
         if(static_loc.slice(-1) === "/"){
-          static_loc = static_loc.slice(0, static_loc.length-1)
+          static_loc = static_loc.slice(0, static_loc.length-1);
         }
         static_loc = static_loc + ".json";
       }
@@ -115,10 +118,14 @@
       return api;
     };
 
+
     api.install_actions = function(){
       // user actions... could be made simpler
       $("#login .btn-primary").on("click", api.login_basic);
+      $("#oauth-login").on("click", api.login_oauth);
+      
       $(".loggedin.yep.action").on("click", api.logout);
+            
       $("#issues .refresh").on("click", api.update_issues_data);
       $("#issues .columns").on("click", api.update_columns("issues"));
 
@@ -131,9 +138,14 @@
       $("#columns .btn-primary").on("click", function(){
         api.update_issues_ui().update_pulls_ui();
       });
+      
+      // listen for login
+      window.addEventListener("message", api.login_oauth);
+      
+      
       return api;
     };
-    
+
 
     api.login_basic = function(){
       // log in to github api with username and password
@@ -149,6 +161,14 @@
         auth: "basic"
       });
       
+      api.login_finish();
+      
+      return api;
+    };
+
+    
+    api.login_finish = function(){
+      
       d3.select("#landing")
         .transition()
           .style("opacity", 0)
@@ -161,8 +181,27 @@
         .style("opacity", 100);
 
       // right now, just does issues... but should do more
-      api.user(username, api.gh_api_available);
-
+      api.user(null, api.gh_api_available);
+    };
+    
+    api.login_oauth = function(evt){
+      if(evt.data === undefined){
+        var gh_login = "https://github.com/login/oauth/authorize",
+          par = {
+            redirect_uri: window.location.origin + "/login",
+            client_id: fragile.GH.CLIENT_ID,
+            state: Math.random()
+          };
+      
+        window.open(gh_login + "?" + $.param(par), "_oauth");
+      }else{
+        $.get("/oauth", {code: evt.data.code, state: evt.data.state},
+          function(access_token){
+            my.gh = new GH({token: access_token, auth: "oauth"});
+            api.login_finish();
+          }
+        );
+      }
       return api;
     };
     

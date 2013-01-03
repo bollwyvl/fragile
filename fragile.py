@@ -3,6 +3,13 @@ import os
 from os.path import join as opj
 from os.path import abspath as opa
 
+import urlparse
+
+try:
+    import local_config
+except ImportError:
+    print("Couldn't find local_config.py")
+
 import mimetypes
 
 # for the webfonts... might change...
@@ -10,9 +17,8 @@ mimetypes.add_type("application/x-font-woff", ".woff")
 
 from flask import (
     Flask,
-)
-from flask import (
     render_template,
+    request,
 )
 
 from flask.ext.bootstrap import Bootstrap
@@ -21,6 +27,7 @@ from flask.ext.assets import Environment
 from webassets.filter.cssrewrite import CSSRewrite
 from webassets.loaders import YAMLLoader
 
+import requests
 
 def make_app(env="dev"):
     """
@@ -95,11 +102,39 @@ def make_app(env="dev"):
     for name, bundle in bundles.iteritems():
         assets.register(name, bundle)
 
+
     @app.route(url_root)
     def index():
-        kwargs = {}
+        kwargs = {
+            "gh_client_id": os.environ.get("GITHUB_CLIENT_ID", 
+                "deadbeef")
+        }
 
         return render_template("index.html", env=env, **kwargs)
+
+
+    @app.route("/login")
+    def login(code=None):
+        return render_template("login.html")
+
+
+    @app.route("/oauth")
+    def oauth():
+        oauth_args = dict(
+            code=request.args.get("code", ""),
+            state=request.args.get("state", ""),
+            client_id=os.environ["GITHUB_CLIENT_ID"],
+            client_secret=os.environ["GITHUB_CLIENT_SECRET"]
+        )
+        
+        req = requests.post(
+            "https://github.com/login/oauth/access_token",
+            data=oauth_args
+        )
+        
+        query = urlparse.parse_qs(req.content)
+        
+        return query["access_token"][0]
 
     return app
 

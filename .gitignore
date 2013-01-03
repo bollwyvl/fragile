@@ -4,4 +4,4 @@ build
 .dirty
 .webassets-cache
 .pylint.d
-
+local_config.py
