@@ -20,6 +20,7 @@ sys.path.extend([
 
 try:
     import local_config
+    local_config.setup()
 except ImportError:
     pass
 

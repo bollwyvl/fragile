@@ -10,6 +10,7 @@ import urlparse
 sys.path += [".."]
 try:
     import local_config
+    local_config.setup()
 except ImportError:
     print("Couldn't find local_config.py")
 
