@@ -123,6 +123,7 @@
       // user actions... could be made simpler
       $("#login .btn-primary").on("click", api.login_basic);
       $("#oauth-login").on("click", api.login_oauth);
+      $("#forget-oauth").on("click", api.forget_oauth);
       
       $(".loggedin.yep.action").on("click", api.logout);
             
@@ -143,6 +144,13 @@
       window.addEventListener("message", api.login_oauth);
       
       
+      return api;
+    };
+
+
+    api.forget_oauth = function(){
+      window.localStorage.gh_access_token = "";
+      api.logout();
       return api;
     };
 
@@ -168,18 +176,6 @@
 
     
     api.login_finish = function(){
-      
-      d3.select("#landing")
-        .transition()
-          .style("opacity", 0)
-          .style("display", "none");
-      
-      d3.select("#app")
-          .style("opacity", 0)
-          .style("display", "block")
-      .transition()
-        .style("opacity", 100);
-
       // right now, just does issues... but should do more
       api.user(null, api.gh_api_available);
     };
@@ -195,13 +191,26 @@
       if(lstrg.gh_access_token){
         complete_token(lstrg.gh_access_token);
       }else if(evt.data === undefined){
+        $(".loggedin.trying").show();
+        $(".loggedin.nope").hide();
         var gh_login = "https://github.com/login/oauth/authorize",
           par = {
             redirect_uri: window.location.origin + "/login",
             client_id: fragile.GH.CLIENT_ID,
             state: Math.random()
-          };
-        window.open(gh_login + "?" + $.param(par), "_oauth");
+          },
+          url = gh_login + "?" + $.param(par),
+          features = $.param({
+            menubar: "no",
+            location: "no",
+            resizable: "no",
+            scrollbars: "no",
+            status: "no",
+            height: 400,
+            width: 1000
+          }).replace(/&/g, ",");
+          console.log(features);
+          window.open(url, "_oauth", features);
       }else{
         $.get("/oauth",
           {code: evt.data.code, state: evt.data.state},
@@ -231,7 +240,7 @@
     };
 
     api.logout = function(){
-      // hopefully actuall gets everything out of scope... might not, 
+      // hopefully actually gets everything out of scope... might not, 
       // as stuff might still be attached to the DOM
       my.gh = null;
       my.user = null;
@@ -252,16 +261,42 @@
     };
     
     api.update_user_ui = function(){
+      var land = d3.select("#landing"),
+        app = d3.select("#app");
+      
       // might be able to do this more elegantly with classes...
       if(my.user){
         $(".username.me").text(my.user.login);
         $(".avatar.me").attr("src", my.user.avatar_url);
         $(".loggedin.yep").show();
         $(".loggedin.nope").hide();
+      
+        land.transition()
+          .style("opacity", 0)
+          .style("display", "none");
+      
+        app.style("opacity", 0)
+          .style("display", "block")
+        .transition()
+          .style("opacity", 100);
+          
       }else{
         $(".loggedin.yep").hide();
         $(".loggedin.nope").show();
+        
+      
+        app.transition()
+          .style("opacity", 0)
+          .style("display", "none");
+          
+        land
+          .style("opacity", 0)
+          .style("display", "block")
+        .transition()
+          .style("opacity", 100);
       }
+      
+      $(".loggedin.trying").hide();
       
       return api;
     };

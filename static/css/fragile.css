@@ -16,6 +16,13 @@ body {
   display: none;
 }
 
+.loggedin.trying{
+  display: none;
+  width: 42px;
+  float: left;
+  clear: none;
+}
+
 img.avatar{
   width: 16px;
   height: 16px;
