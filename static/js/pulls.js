@@ -85,14 +85,13 @@
         avatars.enter().append("img");
         
         avatars
+          .attr("class", "avatar")
           .attr("src", function(usr){
             return usr.value;
           })
           .attr("title", function(usr){
             return usr.key;
-          })
-          .attr("height", 16)
-          .attr("width", 16);
+          });
           
         avatars.exit().remove();
       });
