@@ -4,7 +4,6 @@ from os.path import join as opj
 from os.path import abspath as opa
 
 import sys
-sys.path += [".."]
 
 import urlparse
 
