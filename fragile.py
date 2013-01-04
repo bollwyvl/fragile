@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 from os.path import join as opj
 from os.path import abspath as opa
 
-import sys
-
 import urlparse
 
+# correct path for local_config import
+sys.path += [".."]
 try:
     import local_config
 except ImportError:
