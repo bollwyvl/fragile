@@ -26,6 +26,7 @@ body {
 img.avatar{
   width: 16px;
   height: 16px;
+  margin-right: 1px;
 }
 
 /* treemap */

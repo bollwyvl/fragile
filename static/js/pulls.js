@@ -1,4 +1,4 @@
-;(function(fragile, d3, moment, _){
+;(function(fragile, d3, moment, _, $){
   "use strict";
   // should be mostly self-documenting
   
@@ -86,14 +86,11 @@
         
         avatars
           .attr("class", "avatar")
-          .attr("src", function(usr){
-            return usr.value;
-          })
-          .attr("title", function(usr){
-            return usr.key;
-          });
-          
+          .attr("rel", "tooltip")
+          .attr("title", function(usr){return usr.key;})
+          .attr("src", function(usr){return usr.value;});
         avatars.exit().remove();
+        $("[rel=tooltip]").tooltip();
       });
     }
   };
@@ -135,4 +132,4 @@
   
   fragile.handlers({pulls: pulls});
   
-}).call(this, fragile, d3, moment, _);
+}).call(this, fragile, d3, moment, _, $);
