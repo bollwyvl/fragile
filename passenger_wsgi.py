@@ -13,7 +13,10 @@ if sys.executable != INTERP:
     os.execl(INTERP, INTERP, *sys.argv)
 
 # add to proper path
-sys.path.append.extend([os.getcwd(), os.path.join(os.getcwd(), "app")])
+sys.path.extend([
+  os.getcwd(),
+  os.path.join(os.getcwd(), "app")
+])
 
 try:
     import local_config
