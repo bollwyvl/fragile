@@ -6,7 +6,7 @@ from os.path import abspath as opa
 
 import urlparse
 
-# correct path for local_config import
+# correct path for local_config import...
 sys.path += [".."]
 try:
     import local_config
