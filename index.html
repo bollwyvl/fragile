@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     
-        <link rel="stylesheet" href="./fragile-min.css?1b01a879"/>
+        <link rel="stylesheet" href="./fragile-min.css?1882f51b"/>
     
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -28,11 +28,14 @@
       <a class="brand title from_config" href="#"></a>
       <div class="nav-collapse collapse">
         <ul class="nav pull-right">
-          <li class="dropdown">
+          <li class="dropdown dropup">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <span class="loggedin nope">
-                  Not Logged in to <i class="icon-github-sign"></i>GitHub
+                  Not Logged in to Anything!
                 </span>
+                <div class="loggedin trying progress progress-striped active">
+                  <div class="bar" style="width: 100%;"></div>
+                </div>
                 <span class="loggedin yep">
                   <img src="" class="avatar me" height="16" width="16"/>
                   <b class="me username">username</b>
@@ -40,13 +43,32 @@
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
-                <li class="loggedin nope action">
-                  <a href="#" data-toggle="modal" data-target="#login">
-                    Sign In
+                <li class="dropdown-submenu pull-left">
+                  <a href="#">
+                    <i class="icon-github-sign"></i>GitHub
                   </a>
-                </li>
-                <li class="loggedin yep action">
-                  <a href="#">Log Out</a>
+                  <ul class="dropdown-menu">
+                    <li class="loggedin nope action">
+                      <a href="#" data-toggle="modal" data-target="#login" data-method="basic">
+                        Basic Sign In
+                        <span class="label label-warning">Less Secure</label>
+                      </a>
+                    </li>
+                    <li class="loggedin nope">
+                      <a href="#" id="oauth-login">
+                        OAuth Sign In
+                        <span class="label label-info">More Secure</label>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" id="forget-oauth">
+                        Forget OAuth Tokens
+                      </a>
+                    </li>
+                    <li class="loggedin yep action">
+                      <a href="#">Log Out</a>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </li>
@@ -201,11 +223,12 @@
     <!-- jquery breaks compression method, apparently -->
     <script type="text/javascript" src="./jquery-1.8.3.min.js"></script>
     
-    <script type="text/javascript" src="./fragile-min.js?22cb0fa6"></script>
+    <script type="text/javascript" src="./fragile-min.js?85dc5494"></script>
     
     
     <script type="text/javascript">
       ;(function(){
+        fragile.GH = {CLIENT_ID: "7ab73a402a063026a261"};
         // fire it up
         fragile("./").init();
       }).call(this);
