@@ -80,17 +80,17 @@
       var loc = window.location,
         static_loc = static_path + "fragile.json";
       
-      if(loc.hostname.indexOf("github.com") !== -1){
-        var owner = loc.hostname.replace(".github.com", ""),
-          repo = loc.pathname.split("/")[1];
-        my.cfg.repos = [owner + "/" + repo];
-      }else if(loc.search.length){
+      if(loc.search.length){
         // allow single hosted instance?
         static_loc = static_path + loc.search.slice(2);
         if(static_loc.slice(-1) === "/"){
           static_loc = static_loc.slice(0, static_loc.length-1);
         }
         static_loc = static_loc + ".json";
+      } else if(loc.hostname.indexOf("github.com") !== -1){
+        var owner = loc.hostname.replace(".github.com", ""),
+          repo = loc.pathname.split("/")[1];
+        my.cfg.repos = [owner + "/" + repo];
       }
       
       // extend config with fragile.json
