@@ -39,3 +39,19 @@ img.avatar{
   fill: #999;
 }
 
+/* budget */
+#budget label{
+  float:left;
+  margin-right: 5px;
+}
+#budget i{
+  display:block;
+  float:left;
+  margin-left: -1.5em;
+}
+#budget .progress{
+  width: 84px;
+  float: left;
+  clear: none;
+}
+

@@ -39,7 +39,9 @@
         // column view configurations
         columns: {issues: [], pulls: []},
         // move this later
-        layer_order: []
+        layer_order: [],
+        // api/space budgets
+        budgets: {}
       },
       // the publicly exposed api: see the bottom of the file. all members
       // should return this for chainiliciousness
@@ -140,6 +142,8 @@
         api.update_issues_ui().update_pulls_ui();
       });
       
+      $("[rel='tooltip']").tooltip();
+      
       // listen for login
       window.addEventListener("message", api.login_oauth);
       
@@ -163,17 +167,16 @@
       // not that this will help much...
       $("#password").val("");
 
-      my.gh = new GH({
-        username: username,
-        password: passwd,
-        auth: "basic"
-      });
-      
-      api.login_finish();
+      api
+        .init_gh({
+          username: username,
+          password: passwd,
+          auth: "basic"
+        })
+        .login_finish();
       
       return api;
     };
-
     
     api.login_finish = function(){
       // right now, just does issues... but should do more
@@ -183,9 +186,9 @@
     api.login_oauth = function(evt){
       var lstrg = window.localStorage,
         complete_token = function(access_token){
-          my.gh = new GH({token: access_token, auth: "oauth"});
           lstrg.gh_access_token = access_token;
-          api.login_finish();
+          api.init_gh({token: access_token, auth: "oauth"})
+            .login_finish();
         };
 
       if(lstrg.gh_access_token){
@@ -209,7 +212,6 @@
             height: 400,
             width: 1000
           }).replace(/&/g, ",");
-          console.log(features);
           window.open(url, "_oauth", features);
       }else{
         $.get("/oauth",
@@ -219,6 +221,18 @@
       }
       return api;
     };
+
+    api.logout = function(){
+      // hopefully actually gets everything out of scope... might not, 
+      // as stuff might still be attached to the DOM
+      my.gh = null;
+      my.user = null;
+      api.update_user_ui();
+      
+      return api;
+    };
+    
+
     
     api.gh_api_available = function(){
       // hooray, we have data. let's get busy
@@ -238,14 +252,109 @@
       }
       
     };
-
-    api.logout = function(){
-      // hopefully actually gets everything out of scope... might not, 
-      // as stuff might still be attached to the DOM
-      my.gh = null;
-      my.user = null;
-      api.update_user_ui();
-      
+    
+    api.init_gh = function(options){
+      _.extend(options, {
+        rateLimit: api.update_budget_data(
+          "github",
+          "calls",
+          "<i class='icon-github'/>")
+      });
+      my.gh = new GH(options);
+      return api;
+    };
+    
+    api.update_budget_data = function(budget_type, unit, badge){
+      return function(limit, remaining){
+        if(_.isUndefined(my.budgets[budget_type])){
+          my.budgets[budget_type] = {
+            limit: limit,
+            remaining: remaining,
+            unit: unit,
+            perc: 1.0,
+            badge: badge
+          };
+        }
+        
+        _.extend(my.budgets[budget_type], {
+          limit: limit,
+          remaining: remaining,
+          perc: remaining / limit
+        });
+        
+        return api.update_budget_ui();
+      };
+    };
+    
+    api.update_budget_ui = function(budget_type, unit, badge){
+        var radius = 20,
+          nav_parent = d3.select("#budget a"),
+          svg = nav_parent.select("#budget svg"),
+          gauges = svg.selectAll(".gauge")
+            .data(d3.entries(my.budgets)),
+          badges = nav_parent.selectAll(".gauge_badge")
+            .data(d3.entries(my.budgets)),
+          width = ((d3.entries(my.budgets).length + 1) * 2 * radius),
+          arc_scale = d3.scale.linear()
+            .domain([0, 1])
+            .range([0, Math.PI]),
+          arc = d3.svg.arc()
+            .outerRadius(radius)
+            .innerRadius(radius * 0.8)
+            .startAngle(0)
+            .endAngle(arc_scale);
+        
+        nav_parent.transition()
+          .style("width", width + "px");
+          
+        svg.transition()
+          .attr("width", width);
+            
+        gauges.enter().append("g")
+          .attr("class", "gauge")
+          .attr("transform",  function(budget, idx){
+            return ["translate(",
+              (radius + (radius * 2 * idx)),
+              ",",
+              radius,
+              ")"
+            ].join("");
+          })
+        .append("path")
+          .style("fill", "blue")
+          .attr("transform", "rotate(-90)");
+        
+        badges.enter()
+          .append("div")
+          .attr("class", "gauge_badge")
+          .style("position", "absolute")
+          .style("left", function(budget, idx){
+            return ((((idx + 1) * 2) * radius) + 8) + "px";
+          })
+          .style("bottom", "4px")
+          .html(function(budget, idx){return budget.value.badge;});
+          
+        badges
+          .each(function(budget, idx){
+            $(this).tooltip()
+              .attr('data-original-title', _.template(
+                    "<%= B.key %>: <%= B.value.remaining %> of <%= B.value.limit %> <%= B.value.units %>",
+                  budget,
+                  {variable: "B"}
+                ))
+              .tooltip("fixTitle");
+          })
+          .transition()
+            .style("color", "blue")
+          .transition()
+            .style("color", "white");
+        
+        gauges.select("path").transition()
+          .style("fill", "white")
+          .attr("d", function(budget, idx){
+            return arc(budget.value.perc);
+          });
+          
       return api;
     };
 
@@ -607,6 +716,7 @@
     
     
     api.repo_countdown_to = function(callsback){
+      // async.js does this out of the box... auto?
       // counter for the different callbacks to update
       var repos_left = my.cfg.repos.length;
       
