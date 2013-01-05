@@ -338,7 +338,7 @@
           .each(function(budget, idx){
             $(this).tooltip()
               .attr('data-original-title', _.template(
-                    "<%= B.key %>: <%= B.value.remaining %> of <%= B.value.limit %> <%= B.value.units %>",
+                    "<%= B.key %>: <%= B.value.remaining %> of <%= B.value.limit %> <%= B.value.unit %>",
                   budget,
                   {variable: "B"}
                 ))
