@@ -1,22 +1,51 @@
-# Fragile
+# [Fragile](https://fra.gl)
 For when you have too many issues... too many GitHub issues. And pull requests.
 
 ## What's it do?
-Sign up for OAuth, push Fragile somewhere in your `gh-pages`, view GitHub issue 
-and pull request analytics, pivot, react. Then go bowling.
+Show the relationships between the core artifacts of an open source project through public APIs
+_TODO: across many data providers_.
+- Repos
+- Issues
+- Pull Requests
+- Collaborators
+- TODO: Mailing list threads
+- TODO: wiki pages
+
+## How do I use it?
+Right now, you can check out the proof-of-concept confections on
+[fra.gl](https://fra.gl) for
+[IPython](https://fra.gl/?/config/ipython) and
+[fragile](https://fra.gl/?/config/ipython) itself. 
+
+[An open issue](https://github.com/bollwyvl/fragile/issues/7) is making configs
+referencable by gist id, like the superb [bl.ocks.org](http://bl.ocks.org), at
+which point it will be much easier to add links to new configurations.
+
+Several options for standalone deployment or local usage, are possible, including the
+original deployment concept as a part of `gh-pages`, potentially as a submodule.
 
 # Deployment
+You don't have to deploy fragile. Getting OAuth working is kind of a pain, and I hope
+[fra.gl](https://fra.gl) becomes useful. However, the original concept, still supported,
+is less centralized.
+
 Fragile is a single page app: you can deploy it easily in your `gh-pages` 
-branch, and once you sign into github it should automagically pull in the right 
+branch, and once your users sign into github it should automagically pull in the right 
 issues, pull requests and other things from the GitHub API to make your life 
 better.
 
 ## Register
-Before you get started, if you haven't done so, you'll need to 
+If you want to use the `gh-pages` approach, you'll need to 
 [register](https://github.com/settings/applications/new) your 
 _`sweetusername`_.github.com domain. Otherwise, you'll get nasty XHTTPrequest 
-errors when you try to load the page. You won't use the keys received during 
-the registration process until an [OAuth backend](https://github.com/bollwyvl/fragile/issues/2) is completed.
+errors when you try to load the page.
+
+### Secretsss
+You won't use the client secret received during the registration process unless you actually deploy
+the [OAuth backend](https://github.com/bollwyvl/fragile/issues/2)... which needs better
+documentation. The following instructions will work securely with basic auth, as no information
+is passed to the (fragile) server, but your users will be required to log in with the "keys
+to the kingdom" on APIs.
 
 ## Get it
 In your repo:
@@ -138,7 +167,7 @@ address bar. For example:
 http://bollwyvl.github.com/fragile/?ipython
 will pick load `ipython.json`.
 
-The browser will remember your previous setups.
+TODO: The browser will remember your previous setups in `localStorage`.
 
 # What is this repo?
 Even though Fragile is just HTML and JavaScript, I still haven't found the love 
@@ -169,7 +198,7 @@ It would be great if you pushed your Fragile to the `gh-pages` of a project you
 care about as a test case.
 
 # Roadmap
-This project sprang from general involvment in open source projects, but
+This project sprang from general interest in open source projects, but
 also to support ongoing research into free/libre open source communities. One
 short-term goal in forming the bulk of the experimentation data for a 
 paper/competition entry/workshop at one or more conferences.
@@ -192,14 +221,14 @@ for the documents will be managed in a
 #### Start of Conferences
 
 ## Future Features
-See issues/pull requests. Maybe on the [demo](http://bollwyvl.github.com/fragile)?
+See issues/pull requests. Maybe on the [demo](http://fra.gl/?/config/fragile)?
 
 
 # Motivation
 Successful free software projects grow, sometimes primarily because they are on 
 high-involvement sites like GitHub or SourceForge! At scale, the management of 
 issues and pull requests can become daunting, especially if multiple core 
-developers are involved. From ipython-dev:
+developers are involved. From [Carreau](/Carreau) on ipython-dev:
 
     I think the problem is you don't really know who is responsible for which
     PR/issue, so you lost time wondering whether you have to be involved,
