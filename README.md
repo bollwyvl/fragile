@@ -1,33 +1,7 @@
 # Fragile
 For when you have too many issues... too many GitHub issues. And pull requests.
 
-    PARKING LOT
-
-    Walter and the Dude walk to the Dude's car.  The Pomeranian 
-    trots happily behind Walter who totes the empty carrier.
-
-                      DUDE
-          Walter, you can't do that.  These 
-          guys're like me, they're pacificists.  
-          Smokey was a conscientious objector.
-
-                      WALTER
-          You know Dude, I myself dabbled with 
-          pacifism at one point.  Not in Nam, 
-          of course--
-
-                      DUDE
-          And you know Smokey has emotional 
-          problems!
-
-                      WALTER
-          You mean--beyond pacifism?
-
-                      DUDE
-          He's fragile, man!  He's very fragile!
-    
-    source: http://bednark.com/big.lebowski.script.html
-
+## What's it do?
 Sign up for OAuth, push Fragile somewhere in your `gh-pages`, view GitHub issue 
 and pull request analytics, pivot, react. Then go bowling.
 
@@ -174,7 +148,7 @@ system for an optimized web app.
 
 This repo will maintain the development process: code, build, test, 
 documentation and design. A separate effort, providing feature input to this 
-one, is described in the [Roadmap][#roadmap].
+one, is described in the [Roadmap](#roadmap).
 
 ## Contributing
 Let's make this awesomer!
@@ -204,13 +178,17 @@ The current goal is to structure a monthly release cycle around the lifecycle
 of the conference schedules: while the user is king, certain features may be 
 prioritized to support experiments and visualization techniques. The research 
 for the documents will be managed in a 
-[separate repo](http://github.com/bollwyvl/fragile-paper) on GitHub.
+[separate repo](http://github.com/bollwyvl/fragile-papers) on GitHub.
 
 ### 1.1
+
 #### Proof of concept
-- Meet needs of [Motivation][#motivation], gain feature input
+- Meet needs of [Motivation](#motivation), gain feature input
+- 
 ### *See Future Features*
+
 ### 10.14
+
 #### Start of Conferences
 
 ## Future Features
@@ -242,6 +220,8 @@ developers are involved. From ipython-dev:
      * This pr has 3 "merge ok", I just have to read add mine and I can merge.
      * This PR has already 2 dev with are "involved" I can worry of others.
      * This one has nobody I'll look after it.
+ 
+_source: http://mail.scipy.org/pipermail/ipython-dev/2012-December/010930.html_
 
 I want more lasers in my development!
 
@@ -263,4 +243,33 @@ help of the many libraries and frameworks it uses.
 
 ## Backend
 - [flask](http://flask.pocoo.org/)
-- [werkzeug](http://werkzeug.pocoo.org/)
+- [werkzeug](http://werkzeug.pocoo.org/) 
+
+# Name Origin
+
+    PARKING LOT
+
+    Walter and the Dude walk to the Dude's car.  The Pomeranian 
+    trots happily behind Walter who totes the empty carrier.
+
+                      DUDE
+          Walter, you can't do that.  These 
+          guys're like me, they're pacificists.  
+          Smokey was a conscientious objector.
+
+                      WALTER
+          You know Dude, I myself dabbled with 
+          pacifism at one point.  Not in Nam, 
+          of course--
+
+                      DUDE
+          And you know Smokey has emotional 
+          problems!
+
+                      WALTER
+          You mean--beyond pacifism?
+
+                      DUDE
+          He's fragile, man!  He's very fragile!
+    
+_source: http://bednark.com/big.lebowski.script.html_
