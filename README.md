@@ -1,6 +1,11 @@
 # [Fragile](https://fra.gl)
 For when you have too many issues... too many GitHub issues. And pull requests.
 
+## Screenshot
+A picture is worth a thousand words:
+![fra.gl screenshot](bollwyvl.github.com/fragile/docs/assets/screenshot_fragile.png)
+_A view of fragile's own development on fra.gl_
+
 ## What's it do?
 Show the relationships between the core artifacts of an open source project through public APIs
 _TODO: across many data providers_.
