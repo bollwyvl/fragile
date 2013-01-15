@@ -133,6 +133,8 @@ def copy_assets():
         "dist/font": sh.glob("./static/lib/awesome/font/*"),
         "dist/svg": sh.glob("./static/svg/*.svg"),
         "dist/img": sh.glob("./static/img/*.*") or [],
+        
+        "dist/docs/assets": sh.glob("./docs/assets/*.*") or [],
     }
 
     for dst, copy_files in copy_patterns.items():
