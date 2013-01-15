@@ -3,7 +3,7 @@ For when you have too many issues... too many GitHub issues. And pull requests.
 
 ## Screenshot
 A picture is worth a thousand words:
-![fra.gl screenshot](bollwyvl.github.com/fragile/docs/assets/screenshot_fragile.png)
+![fra.gl screenshot](http://bollwyvl.github.com/fragile/docs/assets/screenshot_fragile.png)
 _A view of fragile's own development on fra.gl_
 
 ## What's it do?
