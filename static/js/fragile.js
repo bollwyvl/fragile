@@ -197,8 +197,9 @@
         $(".loggedin.trying").show();
         $(".loggedin.nope").hide();
         var gh_login = "https://github.com/login/oauth/authorize",
+          loc = window.location,
           par = {
-            redirect_uri: window.location.origin + "/login",
+            redirect_uri: [loc.protocol,  "", loc.host, "login"].join("/"),
             client_id: fragile.GH.CLIENT_ID,
             state: Math.random()
           },
