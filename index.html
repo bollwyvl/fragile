@@ -53,20 +53,20 @@
                     <i class="icon-github-sign"></i>GitHub
                   </a>
                   <ul class="dropdown-menu">
-                    <li class="loggedin nope action">
+                    <li class="loggedin nope action basic">
                       <a href="#" data-toggle="modal" data-target="#login" data-method="basic">
                         Basic Sign In
                         <span class="label label-warning">Less Secure</label>
                       </a>
                     </li>
-                    <li class="loggedin nope">
+                    <li class="loggedin nope oauth">
                       <a href="#" id="oauth-login">
                         OAuth Sign In
                         <span class="label label-info">More Secure</label>
                       </a>
                     </li>
-                    <li>
-                      <a href="#" id="forget-oauth">
+                    <li class="oauth">
+                      <a href="#" id="oauth-forget">
                         Forget OAuth Tokens
                       </a>
                     </li>
@@ -228,14 +228,18 @@
     <!-- jquery breaks compression method, apparently -->
     <script type="text/javascript" src="./jquery-1.8.3.min.js"></script>
     
-    <script type="text/javascript" src="./fragile-min.js?1b8cdd35"></script>
+    <script type="text/javascript" src="./fragile-min.js?2d48eeb8"></script>
     
     
     <script type="text/javascript">
       ;(function(){
         fragile.GH = {CLIENT_ID: "7ab73a402a063026a261"};
         // fire it up
-        fragile("./").init();
+        
+        fragile()
+          .static_path("./")
+          
+          .init();
       }).call(this);
     </script>
   </body>
