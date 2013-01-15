@@ -174,13 +174,21 @@
   <div id="login" class="modal hide fade">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Sign In to GitHub</h3>
+      <h3>Sign In to GitHub with Basic Authentication</h3>
     </div>
     <div class="modal-body">
-      <p>Because this is just some JavaScript (and can't, therefore, store a 
-         Client Secret), you'll have to log in with your GitHub username and 
-         password. I am working on a backend OAuth authenticator that could be 
-         deployed easily to Heroku or App Engine or something.
+      <p>Basic Authentication uses your Github username and password (over
+         HTTPS) for all API calls while this page is loaded. It's Probably 
+         Safe: no information is shared with the site hosting this page. Your 
+         password is not stored in cookies, localStorage or otherwise between
+         page loads.
+      </p>
+      </p>
+        OAuth is preferable, but should only be used with a server you can 
+        trust, such as an SSL-backed public server like
+        <a href="https://fra.gl">fra.gl</a> or your own development machine.
+      </p>
+      <p>
        
          <form class="form-inline">
            <input id="username" type="text" class="input-small" placeholder="Username">
